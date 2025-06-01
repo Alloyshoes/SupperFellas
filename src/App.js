@@ -1,4 +1,6 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginSignup from './pages/LoginSignup/LoginSignup';
+import PostsHome from './pages/Posts/PostsHome';
 
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
@@ -16,7 +18,13 @@ const auth = getAuth(app);
 function App() {
 	return (
 		<div className="App">
-			<LoginSignup auth={auth}/>
+			<BrowserRouter>
+				<Routes>
+					<Route path="/" element={<LoginSignup auth={auth} />}></Route>
+					<Route path="posts" element={<PostsHome auth={auth} />}></Route>
+					<Route path="*" element={<LoginSignup auth={auth} />}></Route> {/* Unknown page go login page for now */}
+				</Routes>
+			</BrowserRouter>
 		</div>
 	);
 }

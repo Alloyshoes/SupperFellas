@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 import './LoginSignup.css';
 
 import user_icon from '../../assets/person.png';
@@ -15,6 +16,8 @@ const LoginSignup = props => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
+	const navigate = useNavigate();
+
 	// temp function just to get the auth working ya
 	async function submit(e) {
 		e.preventDefault();
@@ -25,6 +28,7 @@ const LoginSignup = props => {
 					const user = creds.user;
 					console.log("Logged in!");
 					console.log(user);
+					navigate("/posts");
 				})
 				.catch(error => {
 					console.error(error.code, error.message);
@@ -36,6 +40,7 @@ const LoginSignup = props => {
 					const user = creds.user;
 					console.log("Successfully signed up!");
 					console.log(user);
+					navigate("/posts");
 				})
 				.catch(error => {
 					console.error(error.code, error.message);
