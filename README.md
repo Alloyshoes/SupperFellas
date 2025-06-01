@@ -116,4 +116,4 @@ Coming soon! Unit tests will be implemented React and Firebase Testing Library.
 
 ## 🙌 Contributions
 
-Contributions, bug reports, and feature suggestions are welcome. Please open an issue or submit a pull request!
+<!--Contributions, bug reports, and feature suggestions are welcome. Please open an issue or submit a pull request!-->
