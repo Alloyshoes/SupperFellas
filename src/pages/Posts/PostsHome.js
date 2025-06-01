@@ -3,7 +3,7 @@ import React from "react";
 class PostsHome extends React.Component {
 	constructor() {
 		super();
-		this.state = { user: null, items: [] };
+		this.state = { user: null, items: ["one", "two", "three"] };
 	}
 
 	componentDidMount() {
@@ -23,6 +23,14 @@ class PostsHome extends React.Component {
 
 		return <div>
 			<div style={{ fontSize: 50, textAlign: "center" }}>Welcome back {this.state.user.email}!</div>
+			<div id="postsContainer" style={{ fontSize: 30, padding: 70 }}>
+				Add a new post: <br />
+				<input id="newPost"></input> <br />
+				<button>Submit</button>
+				<ul>
+					{this.state.items.map(i => <li>{i}</li>)}
+				</ul>
+			</div>
 		</div>;
 	}
 }
