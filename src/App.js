@@ -21,7 +21,7 @@ function App() {
 			<BrowserRouter>
 				<Routes>
 					<Route path="/" element={<LoginSignup auth={auth} />}></Route>
-					<Route path="posts" element={<PostsHome auth={auth} />}></Route>
+					<Route path="posts" element={<PostsHome app={app} auth={auth} />}></Route>
 					<Route path="*" element={<LoginSignup auth={auth} />}></Route> {/* Unknown page go login page for now */}
 				</Routes>
 			</BrowserRouter>
