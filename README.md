@@ -53,7 +53,7 @@ Coming Soon
 - **Backend**: Spring Boot Java 
 - **Database**: Firebase Realtime Database  
 - **Authentication**: Firebase Authentication  
-- **Hosting**: Vercel / Heroku / Netlify (depending on final deployment)
+- **Hosting**: Firebase Hosting
 
 ---
 
