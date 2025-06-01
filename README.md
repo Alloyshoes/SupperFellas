@@ -50,7 +50,7 @@ Coming Soon
 ## 🛠️ Tech Stack
 
 - **Frontend**: React.js
-- **Backend**: Spring Bboot Java 
+- **Backend**: Spring Boot Java 
 - **Database**: Firebase Realtime Database  
 - **Authentication**: Firebase Authentication  
 - **Hosting**: Vercel / Heroku / Netlify (depending on final deployment)
