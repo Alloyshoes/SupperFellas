@@ -38,12 +38,12 @@ Track our team’s progress, contributions, and logged development hours here:
 ---
 
 ## 📸 Screenshots
-
-//![Screenshot 1](assets/screenshot1.png)  
+Coming Soon
+<!-- ![Screenshot 1](assets/screenshot1.png)  
 *Map view with available group orders.*
 
-//![Screenshot 2](assets/screenshot2.png)  
-*Order creation interface.*
+![Screenshot 2](assets/screenshot2.png)  
+*Order creation interface.* -->
 
 ---
 
