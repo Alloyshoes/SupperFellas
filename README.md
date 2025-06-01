@@ -59,8 +59,8 @@ Coming Soon
 
 ## 👥 Team SupperFellas
 
-- Aloysius Goh
-- Isaac Goh
+- Aloysius Goh (https://github.com/Alloyshoes)
+- Isaac Goh (https://github.com/zenercurrent)
 
 ---
 
