@@ -9,7 +9,8 @@ SupperFellas is a web application that helps users save on late-night delivery f
 ## 🔗 Project Log
 
 Track our team’s progress, contributions, and logged development hours here:  
-[📘 Project Log (Google Sheets)](https://docs.google.com/spreadsheets/d/1maxVL-1SHedibrd7PFhfWpL-hUdLJMBkHROmstv3inE/edit?usp=sharing)  
+[📘 Project Log (Google Sheets)](<a href="https://docs.google.com/spreadsheets/d/1maxVL-1SHedibrd7PFhfWpL-hUdLJMBkHROmstv3inE/edit?usp=sharing" target="_blank">📘 Project Log (Google Sheets)</a>
+)  
 > *(Each member must log at least 140 hours. Tasks include design, learning technologies, coding, and debugging.)*
 
 ---
