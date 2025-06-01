@@ -104,7 +104,7 @@ supperfellas/
 
 ## 🧪 Testing
 
-Coming soon! Unit tests will be implemented using Jest and React Testing Library.
+Coming soon! Unit tests will be implemented React and Firebase Testing Library.
 
 ---
 
