@@ -4,6 +4,11 @@
 
 SupperFellas is a web application that helps users save on late-night delivery fees by connecting them with others nearby to share food delivery orders. Whether you're burning the midnight oil or just craving some supper, SupperFellas helps you find or start a group order quickly, easily, and cost-effectively.
 
+**Motivation**
+We are full-time students who often get hungry, especially late at night after long study sessions. However, food delivery fees are expensive and often deter us from ordering food. Additionally, finding reliable recommendations for supper options around NUS can be challenging.
+
+A centralised platform that facilitates group orders and provides student-generated recommendations would allow students to share delivery costs while also accessing a wide range of trusted supper options. Group ordering would not only make food more affordable but also create opportunities for students to connect with like-minded individuals and foster a community centred around supper gatherings.
+
 ---
 
 ## 🔗 Project Log
