@@ -1,10 +1,11 @@
 import React from "react";
+import Post from "./Post.js";
 import { getDatabase, ref, set } from "firebase/database";
 
 class PostsHome extends React.Component {
 	constructor() {
 		super();
-		this.state = { user: null, items: [], updated: false, newItem: "" };
+		this.state = { user: null, items: [], updated: false, postTitle: "", postLink: "" };
 	}
 
 	componentDidMount() {
@@ -12,19 +13,31 @@ class PostsHome extends React.Component {
 
 		console.log(this.state.user);
 		if (this.state.user === null) {
-			console.error("You are not logged in!")
+			console.error("You are not logged in!");
 		}
 	}
 
-	addPost(items, item) {
+	newPost(e) {
+		e.preventDefault();
+		if (this.state.postTitle == "" || this.state.postLink == "") return;
+
 		const db = getDatabase(this.props.app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
-		items.push(item);
-		if (item !== "") {
-			console.log("Writing to database...")
-			set(ref(db, "/"), {
-				posts: items
-			}).then(() => this.setState({ updated: false }));
+		console.log(this.state);
+
+		var postObj = {
+			id: "placeholder_id",
+			link: this.state.postLink,
+			timestamp: Date.now(),
+			title: this.state.postTitle,
+			user: this.state.user.email		// TODO: can change to displayName
 		}
+		this.state.items.push(postObj);
+
+
+		console.log("Writing to database...")
+		set(ref(db, "/"), {
+			posts: this.state.items
+		}).then(() => this.setState({ updated: false }));
 	}
 
 	render() {
@@ -40,14 +53,24 @@ class PostsHome extends React.Component {
 		}
 
 		return <div>
-			<div style={{ fontSize: 50, textAlign: "center" }}>Welcome back {this.state.user.email}!</div>
-			<div id="postsContainer" style={{ fontSize: 30, padding: 70 }}>
-				Add a new post: <br />
-				<input id="newPost" onChange={(e) => this.setState({ newItem: e.target.value })}></input> <br />
-				<button onClick={() => this.addPost(this.state.items, this.state.newItem)}>Submit</button>
-				<ul>
-					{this.state.items.map(i => <li>{i}</li>)}
-				</ul>
+			<div className="posts-home-container">
+				<div id="welcome-text">Welcome back {this.state.user.email}!</div>
+
+				<div className="add-post-form">
+					<h2>Add a new post</h2>
+					<form onSubmit={e => this.newPost(e)}>
+						<label className="form-label">Title</label>
+						<input className="form-input" onChange={(e) => this.setState({ postTitle: e.target.value })} />
+
+						<label className="form-label">Link</label>
+						<input className="form-input" onChange={(e) => this.setState({ postLink: e.target.value })} />
+
+						<input className="submit-button" type="submit" value="Submit Post" />
+					</form>
+				</div>
+
+				{/* Post Feed */}
+				{this.state.items.map((post, idx) => <Post key={idx} post={post}></Post>)}
 			</div>
 		</div>;
 	}
