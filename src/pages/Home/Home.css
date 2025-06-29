@@ -1,0 +1,55 @@
+.custom-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #343a40; /* matches Razor Pages navbar bg */
+  color: #fff;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  z-index: 1030; /* similar to Bootstrap's navbar z-index */
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.navbar-container {
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* NEW: pushes brand to left, links to right */
+}
+
+
+.navbar-brand {
+  font-weight: 500; /* matches Bootstrap brand weight */
+  font-size: 20px;
+  color: white;
+  text-decoration: none;
+  margin-right: 30px; /* typical space between brand & links */
+}
+
+.navbar-links {
+  display: flex;
+  gap: 20px; /* ~1.25rem space between links */
+}
+
+.navbar-link {
+  color: rgba(255, 255, 255, 0.55); /* muted white like Razor Pages links */
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.2s ease;
+}
+
+.navbar-link:hover,
+.navbar-link:focus {
+  color: rgba(255, 255, 255, 0.75); /* slightly brighter on hover */
+}
+
+/* Prevent content from hiding behind navbar */
+body {
+  margin: 0;
+  padding-top: 56px; /* navbar height */
+}
