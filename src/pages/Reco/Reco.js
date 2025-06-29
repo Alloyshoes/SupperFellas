@@ -32,8 +32,8 @@ function Reco(props) {
   );
 
   const handleSelect = (restaurant) => {
-    props.onSelectRestaurant(restaurant); // ✅ update selected restaurant in App
-    navigate('/RestoDetails'); // ✅ navigate to detail page
+    props.onSelectRestaurant(restaurant); // update selected restaurant in App
+    navigate('/RestoDetails'); // navigate to detail page
   };
 
   return (

@@ -1,17 +1,19 @@
 import React from "react";
 import Post from "./Post.js";
+import "./Posts.css";
 import { getDatabase, ref, set } from "firebase/database";
+import scrape from "./OrderScraper.js";
 
 class PostsHome extends React.Component {
 	constructor() {
 		super();
-		this.state = { user: null, items: [], updated: false, postTitle: "", postLink: "" };
+		this.state = { user: null, items: {}, updated: false, postTitle: "", postLink: "" };
 	}
 
 	componentDidMount() {
 		this.setState({ user: this.props.auth.currentUser, updated: false });
 
-		console.log(this.state.user);
+		console.log(this.state);
 		if (this.state.user === null) {
 			console.error("You are not logged in!");
 		}
@@ -19,25 +21,33 @@ class PostsHome extends React.Component {
 
 	newPost(e) {
 		e.preventDefault();
+		e.target.reset();
 		if (this.state.postTitle == "" || this.state.postLink == "") return;
 
 		const db = getDatabase(this.props.app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
-		console.log(this.state);
+		const newId = Math.random().toString(36).substring(2, 10); 	// random 8-digit id
+		if (Object.keys(this.state.items).includes(newId)) {
+			this.newPost(e);
+			return;
+		}
 
 		var postObj = {
-			id: "placeholder_id",
 			link: this.state.postLink,
 			timestamp: Date.now(),
 			title: this.state.postTitle,
-			user: this.state.user.email		// TODO: can change to displayName
+			user: this.state.user.email		// TODO: can change to displayName next time
 		}
-		this.state.items.push(postObj);
+		// order scraper action insert
+		scrape(this.state.postLink).then(data => {
+			if (data === null) alert("Link is invalid!");
+			else {
+				set(ref(db, "/posts/" + newId), { ...postObj, ...data }).then(() => this.setState({ updated: false }));
+			}
+		});
 
 
 		console.log("Writing to database...")
-		set(ref(db, "/"), {
-			posts: this.state.items
-		}).then(() => this.setState({ updated: false }));
+		set(ref(db, "/posts/" + newId), postObj).then(() => this.setState({ updated: false }));
 	}
 
 	render() {
@@ -56,8 +66,9 @@ class PostsHome extends React.Component {
 			<div className="posts-home-container">
 				<div id="welcome-text">Welcome back {this.state.user.email}!</div>
 
+				{/* TODO: to be exported into PostsCreator component */}
 				<div className="add-post-form">
-					<h2>Add a new post</h2>
+					<h2>Start a new group order!</h2>
 					<form onSubmit={e => this.newPost(e)}>
 						<label className="form-label">Title</label>
 						<input className="form-input" onChange={(e) => this.setState({ postTitle: e.target.value })} />
@@ -68,9 +79,10 @@ class PostsHome extends React.Component {
 						<input className="submit-button" type="submit" value="Submit Post" />
 					</form>
 				</div>
+				<hr /> <br />
 
 				{/* Post Feed */}
-				{this.state.items.map((post, idx) => <Post key={idx} post={post}></Post>)}
+				{Object.values(this.state.items).map((post, idx) => <Post key={idx} post={post}></Post>)}
 			</div>
 		</div>;
 	}
