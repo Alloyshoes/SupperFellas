@@ -1,0 +1,48 @@
+.detail-page {
+  padding: 20px;
+}
+
+.back-button {
+  margin-bottom: 15px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.detail-header h2 {
+  margin: 0 0 5px;
+}
+
+.detail-meta {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.detail-location {
+  font-size: 14px;
+  color: #555;
+}
+
+.ratings-breakdown {
+  margin-top: 20px;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.review-list {
+  margin-top: 20px;
+}
+
+.review {
+  margin-bottom: 15px;
+}
+
+.review-user {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.review-text {
+  font-size: 14px;
+}

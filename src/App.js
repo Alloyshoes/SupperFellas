@@ -3,8 +3,8 @@ import { useState } from 'react';
 import LoginSignup from './pages/LoginSignup/LoginSignup';
 import PostsHome from './pages/Posts/PostsHome';
 import Home from './pages/Home/Home';
-// import Reco from './pages/Reco/Reco';
-// import RestoDetails from './pages/RestoDetails/RestoDetails';
+import Reco from './pages/Reco/Reco';
+import RestoDetails from './pages/RestoDetails/RestoDetails';
 
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
@@ -29,8 +29,8 @@ function App() {
 			<Routes>
 				<Route path="/" element={<LoginSignup auth={auth} />}></Route>
 				<Route path="posts" element={<PostsHome app={app} auth={auth} />}></Route>
-				{/* <Route path="Reco" element={<Reco app={app} auth={auth} onSelectRestaurant={setSelected} />}></Route>
-				<Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selected} />}></Route> */}
+				<Route path="Reco" element={<Reco app={app} auth={auth} onSelectRestaurant={setSelected} />}></Route>
+				<Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selected} />}></Route>
 				<Route path="*" element={<LoginSignup auth={auth} />}></Route> {/* Unknown page go login page for now */}
 			</Routes>
 		</div>
