@@ -139,3 +139,101 @@
 .submit-button:hover {
 	background-color: #0056b3;
 }
+
+/* GroupOrderPage */
+
+.grouporder-container {
+	max-width: 700px;
+	margin: 40px auto;
+	padding: 20px;
+	font-family: 'Segoe UI', sans-serif;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.order-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.restaurant-name {
+	font-size: 2rem;
+	color: #2c3e50;
+	margin: 0;
+}
+
+.provider-logo-badge {
+	height: 40px;
+	width: auto;
+}
+
+.order-title {
+	font-size: 1.1rem;
+	font-style: italic;
+	color: #555;
+	margin: 8px 0 16px;
+}
+
+.join-button {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 8px;
+	font-size: 1rem;
+	cursor: pointer;
+	margin: 10px 0;
+	transition: background-color 0.2s ease;
+}
+
+.join-button:hover {
+	background-color: #0056b3;
+}
+
+.participants-list {
+	list-style-type: none;
+	padding-left: 0;
+}
+
+.chat-box {
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	padding: 12px;
+	height: 200px;
+	overflow-y: auto;
+	background-color: #f9f9f9;
+	margin-bottom: 10px;
+}
+
+.chat-message {
+	padding: 4px 0;
+	font-size: 0.95rem;
+}
+
+.chat-input {
+	display: flex;
+	gap: 8px;
+}
+
+.chat-input input {
+	flex: 1;
+	padding: 8px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+}
+
+.chat-input button {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.chat-input button:hover {
+	background-color: #0056b3;
+}

@@ -8,6 +8,7 @@ import RestoDetails from './pages/RestoDetails/RestoDetails';
 
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import GroupOrderPage from './pages/Posts/GroupOrderPage';
 
 // saved in .env file
 const firebaseConfig = {
@@ -31,6 +32,7 @@ function App() {
 				<Route path="posts" element={<PostsHome app={app} auth={auth} />}></Route>
 				<Route path="Reco" element={<Reco app={app} auth={auth} onSelectRestaurant={setSelected} />}></Route>
 				<Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selected} />}></Route>
+				<Route path="/order/:id" element={<GroupOrderPage />}></Route>
 				<Route path="*" element={<LoginSignup auth={auth} />}></Route> {/* Unknown page go login page for now */}
 			</Routes>
 		</div>

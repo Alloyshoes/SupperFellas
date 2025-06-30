@@ -1,5 +1,6 @@
 import "./Posts.css";
 import grabLogo from "../../assets/providers/grab-logo.png";
+import { useNavigate } from "react-router-dom";
 
 // Post object: (sent as a prop)
 /*
@@ -15,10 +16,13 @@ import grabLogo from "../../assets/providers/grab-logo.png";
 	distance info
 	cuisine tags
 */
-const Post = ({ post }) => {
+const Post = ({ post, id }) => {
+	const navigate = useNavigate();
+	const handleClick = () => navigate(`/order/${id}`)
+
 	const isGrab = post.link.includes("grab"); 	// TODO: better check if it is a valid grab link
 
-	return <div className="post-card">
+	return <div className="post-card" onClick={handleClick}>
 		<div className="post-header">
 			<span className="poster">{post.user}</span>
 			<span className="timestamp">{new Date(post.timestamp).toLocaleString()}</span>

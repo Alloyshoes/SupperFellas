@@ -22,7 +22,10 @@ class PostsHome extends React.Component {
 	newPost(e) {
 		e.preventDefault();
 		e.target.reset();
-		if (this.state.postTitle == "" || this.state.postLink == "") return;
+		if (this.state.postTitle == "" || this.state.postLink == "") {
+			alert("Please don't leave the fields blank!");
+			return;
+		};
 
 		const db = getDatabase(this.props.app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
 		const newId = Math.random().toString(36).substring(2, 10); 	// random 8-digit id
@@ -35,7 +38,8 @@ class PostsHome extends React.Component {
 			link: this.state.postLink,
 			timestamp: Date.now(),
 			title: this.state.postTitle,
-			user: this.state.user.email		// TODO: can change to displayName next time
+			user: this.state.user.email,		// TODO: can change to displayName next time
+			joinedUsers: [this.state.user.email]
 		}
 		// order scraper action insert
 		scrape(this.state.postLink).then(data => {
@@ -82,7 +86,7 @@ class PostsHome extends React.Component {
 				<hr /> <br />
 
 				{/* Post Feed */}
-				{Object.values(this.state.items).map((post, idx) => <Post key={idx} post={post}></Post>)}
+				{Object.values(this.state.items).map((post, idx) => <Post key={idx} post={post} id={Object.keys(this.state.items)[idx]}></Post>)}
 			</div>
 		</div>;
 	}
