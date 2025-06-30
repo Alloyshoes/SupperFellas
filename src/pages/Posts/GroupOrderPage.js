@@ -30,13 +30,12 @@ const GroupOrderPage = props => {
 	console.log(updated);
 
 	function sendMessage() {
-		set(ref(db, "/chat_data/" + id), [...chat, { from: post.user, text: msg }]).then(() => setStatus(false));
+		set(ref(db, "/chat_data/" + id), [...chat, { from: props.auth.currentUser.email, text: msg }]).then(() => setStatus(false));
 		setMsg("");
 	}
 
 	function handleJoin() {
-		// TODO: post.user is actually wrong. it needs to be auth.user to be current user
-		set(ref(db, "/posts/" + id + "/joinedUsers"), [...post.joinedUsers, post.user]).then(() => setStatus(false));
+		set(ref(db, "/posts/" + id + "/joinedUsers"), [...post.joinedUsers, props.auth.currentUser.email]).then(() => setStatus(false));
 	}
 
 	return <div className="grouporder-container">
@@ -52,7 +51,7 @@ const GroupOrderPage = props => {
 		<p><strong>Distance:</strong> {post.distanceInfo}</p>
 		<p><strong>Cuisine:</strong> {post.cuisineInfo}</p>
 
-		{!post.joinedUsers?.includes(post.user) && <button className="join-button" onClick={handleJoin}>Join Group Order</button>}
+		{!post.joinedUsers?.includes(props.auth.currentUser.email) && <button className="join-button" onClick={handleJoin}>Join Group Order</button>}
 
 		<hr />
 
@@ -67,7 +66,7 @@ const GroupOrderPage = props => {
 
 		<h3>Group Chat</h3>
 		<div className="chat-box">
-			{chat.map((m, i) => (
+			{chat?.map((m, i) => (
 				<div key={i} className="chat-message">
 					<strong>{m.from}:</strong> {m.text}
 				</div>

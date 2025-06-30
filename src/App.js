@@ -32,7 +32,7 @@ function App() {
 				<Route path="posts" element={<PostsHome app={app} auth={auth} />}></Route>
 				<Route path="Reco" element={<Reco app={app} auth={auth} onSelectRestaurant={setSelected} />}></Route>
 				<Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selected} />}></Route>
-				<Route path="/order/:id" element={<GroupOrderPage />}></Route>
+				<Route path="/order/:id" element={<GroupOrderPage auth={auth} />}></Route>
 				<Route path="*" element={<LoginSignup auth={auth} />}></Route> {/* Unknown page go login page for now */}
 			</Routes>
 		</div>
