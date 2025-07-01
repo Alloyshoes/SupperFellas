@@ -30,6 +30,12 @@ const GroupOrderPage = props => {
 	console.log(updated);
 
 	function sendMessage() {
+		// set limit for demo (10 messages)
+		if (chat.length >= 10) {
+			console.log("[DEMO] For testing purposes, chat messages per group order post is limited to 10!");
+			return;
+		}
+
 		set(ref(db, "/chat_data/" + id), [...chat, { from: props.auth.currentUser.email, text: msg }]).then(() => setStatus(false));
 		setMsg("");
 	}

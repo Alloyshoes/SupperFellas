@@ -20,6 +20,12 @@ class PostsHome extends React.Component {
 	}
 
 	newPost(e) {
+		// set limit for demo (10 posts)
+		if (Object.keys(this.state.items).length == 10) {
+			console.log("[DEMO] For testing purposes, number of posts allowed is limited to 10!");
+			return;
+		}
+
 		e.preventDefault();
 		e.target.reset();
 		if (this.state.postTitle == "" || this.state.postLink == "") {
