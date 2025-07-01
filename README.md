@@ -90,23 +90,26 @@ supperfellas/
    git clone https://github.com/Alloyshoes/SupperFellas.git
    cd supperfellas
    ```
-<!--
 2. **Install dependencies**  
    ```bash
-   cd src && npm install
+   npm install
+   cd server
+   npm install
    ```
 
 3. **Set up environment variables**  
-   Rename `.env.example` to `.env` in both `client/` and `server/`, and fill in required values.
+   The `.env` file is not stored in the repository. Please request it from Isaac or Aloysius to run locally. <br/>
+   Alternatively, you can host your own [Firebase Auth/Realtime Database](https://console.firebase.google.com/u/0/).
 
-4. **Run the app**  
-   - Start backend:  
+5. **Run the app**  
+   - Start React App:  
      ```bash
-     cd server && npm run dev
+     npm start
      ```
-   - Start frontend:  
+   - Start Express backend (for web scraping feature):  
      ```bash
-     cd client && npm start
+     cd server
+     node server.js
      ```
 -->
 ---
