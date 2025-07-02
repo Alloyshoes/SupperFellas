@@ -84,7 +84,7 @@ supperfellas/
 ---
 
 ## Link to our Application
-<a href="superfellas.vercel.app">
+<a href="superfellas.vercel.app" target="_blank">Click Here </a>
 
 ## 📦 Setup Instructions
 
