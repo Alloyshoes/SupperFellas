@@ -84,9 +84,7 @@ supperfellas/
 ---
 
 ## Link to our Application
-```bash
-superfellas.vercel.app
-```
+<a href="superfellas.vercel.app">
 
 ## 📦 Setup Instructions
 
