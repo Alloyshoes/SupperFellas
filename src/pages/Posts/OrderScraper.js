@@ -10,7 +10,7 @@ const checkLink = link => {
 	3.
 */
 async function scrape(link) {
-	const res = await fetch("http://localhost:5000/api/scrape", {
+	const res = await fetch(process.env.REACT_APP_SCRAPER_ENDPOINT + "/api/scrape", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ url: link })
