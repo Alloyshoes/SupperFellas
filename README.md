@@ -83,6 +83,11 @@ supperfellas/
 
 ---
 
+## Link to our Application
+```bash
+superfellas.vercel.app
+```
+
 ## 📦 Setup Instructions
 
 1. **Clone the repository**  
