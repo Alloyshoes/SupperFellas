@@ -13,7 +13,6 @@ class PostsHome extends React.Component {
 	componentDidMount() {
 		this.setState({ user: this.props.auth.currentUser, updated: false });
 
-		console.log(this.state);
 		if (this.state.user === null) {
 			console.error("You are not logged in!");
 		}

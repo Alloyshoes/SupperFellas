@@ -26,9 +26,6 @@ const GroupOrderPage = props => {
 		});
 	}
 
-	console.log(post);
-	console.log(updated);
-
 	function sendMessage() {
 		// set limit for demo (10 messages)
 		if (chat.length >= 10) {
