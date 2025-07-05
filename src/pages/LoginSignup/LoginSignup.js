@@ -27,7 +27,6 @@ const LoginSignup = props => {
 				.then(creds => {
 					const user = creds.user;
 					console.log("Logged in!");
-					console.log(user);
 					navigate("/posts");
 				})
 				.catch(error => {
@@ -39,7 +38,6 @@ const LoginSignup = props => {
 				.then(creds => {
 					const user = creds.user;
 					console.log("Successfully signed up!");
-					console.log(user);
 					navigate("/posts");
 				})
 				.catch(error => {

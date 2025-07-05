@@ -21,7 +21,7 @@ const GroupOrderPage = props => {
 		});
 
 		get(ref(db, "/chat_data/" + id)).then(r => {
-			setChat(r.val());
+			setChat(r.val() ?? []);
 			setStatus(true);
 		});
 	}
