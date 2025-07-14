@@ -1,39 +1,59 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getDatabase, ref, get } from 'firebase/database';
 import './Reco.css';
-import prata1 from '../../assets/prata1.jpg';
-import prata2 from '../../assets/prata2.jpg';
 
-const restaurants = [
-  {
-    id: 1,
-    name: "Sabeen Sara Prata And Briyani Stall",
-    rating: 4.5,
-    reviews: 85,
-    location: "79 Telok Blangah Dr, #01-07",
-    image: prata1
-  },
-  {
-    id: 2,
-    name: "Master Prata",
-    rating: 4.6,
-    reviews: 2004,
-    location: "321 Alexandra Rd, Alexandra Central",
-    image: prata2
-  }
-];
-
-function Reco(props) {
+function Reco({ app, onSelectRestaurant }) {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
+  const [restaurants, setRestaurants] = useState([]);
+
+  const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
+
+  useEffect(() => {
+    const recoRef = ref(db, 'recommendations');
+    get(recoRef).then(snapshot => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const list = Object.keys(data).map(name => {
+          const allReviews = data[name].reviews || {};
+          const reviewArray = Object.values(allReviews);
+          const rating = reviewArray.length > 0
+            ? reviewArray.reduce((sum, review) => sum + (review.rating || 0), 0) / reviewArray.length
+            : 0;
+
+          // 🔍 Find first review with an image
+          const imageReview = reviewArray.find(r => typeof r.image === 'string' && r.image.trim().startsWith('data:image/'));
+          const image = imageReview?.image || '';
+
+          // 📍 Also get a location from any review
+          const locationReview = reviewArray.find(r => r.location);
+          const location = locationReview?.location || '';
+
+          return {
+            id: name,
+            name,
+            rating,
+            reviews: reviewArray.length,
+            location,
+            image
+          };
+        });
+        setRestaurants(list);
+      }
+    });
+  }, [db]);
+
+
+
 
   const filtered = restaurants.filter(r =>
     r.name.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleSelect = (restaurant) => {
-    props.onSelectRestaurant(restaurant); // update selected restaurant in App
-    navigate('/RestoDetails'); // navigate to detail page
+    onSelectRestaurant(restaurant);
+    navigate('/RestoDetails');
   };
 
   return (
@@ -45,11 +65,21 @@ function Reco(props) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+        <button onClick={() => navigate('/ReccoCreate')}>Create Recommendation</button>
       </div>
+
       <div className="results-list">
         {filtered.map((r) => (
           <div key={r.id} className="restaurant-card" onClick={() => handleSelect(r)}>
-            <img src={r.image} alt={r.name} />
+            {r.image && (
+              <img
+                src={r.image}
+                alt={r.name}
+                onError={(e) => {
+                  e.target.src = 'https://via.placeholder.com/120x90?text=No+Image';
+                }}
+              />
+            )}
             <div className="restaurant-info">
               <h3>{r.name}</h3>
               <div className="meta">
