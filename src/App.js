@@ -5,7 +5,7 @@ import PostsHome from './pages/Posts/PostsHome';
 import Home from './pages/Home/Home';
 import Reco from './pages/Reco/Reco';
 import RestoDetails from './pages/RestoDetails/RestoDetails';
-
+import ReccoCreate from './pages/ReccoCreate/ReccoCreate';
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import GroupOrderPage from './pages/Posts/GroupOrderPage';
@@ -30,6 +30,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<LoginSignup auth={auth} />}></Route>
 				<Route path="posts" element={<PostsHome app={app} auth={auth} />}></Route>
+				<Route path="ReccoCreate" element={<ReccoCreate app={app} auth={auth} />}></Route>
 				<Route path="Reco" element={<Reco app={app} auth={auth} onSelectRestaurant={setSelected} />}></Route>
 				<Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selected} />}></Route>
 				<Route path="/order/:id" element={<GroupOrderPage auth={auth} />}></Route>

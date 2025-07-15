@@ -1,0 +1,43 @@
+.recco-create-container {
+  max-width: 600px;
+  margin: 40px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  font-family: sans-serif;
+}
+
+.recco-create-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.recco-create-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.recco-create-container input[type="text"],
+.recco-create-container select,
+.recco-create-container input[type="file"],
+.recco-create-container textarea {
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+}
+
+.recco-create-container button {
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.recco-create-container button:hover {
+  background-color: #0056b3;
+}
