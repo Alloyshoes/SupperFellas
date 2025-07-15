@@ -7,8 +7,22 @@ function Reco({ app, onSelectRestaurant }) {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [restaurants, setRestaurants] = useState([]);
+  const [userCoords, setUserCoords] = useState(null);
 
   const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
+
+  // 🌍 Get user location on mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        pos => setUserCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        err => {
+          console.warn("User location not available:", err.message);
+          setUserCoords(null);
+        }
+      );
+    }
+  }, []);
 
   useEffect(() => {
     const recoRef = ref(db, 'recommendations');
@@ -22,13 +36,15 @@ function Reco({ app, onSelectRestaurant }) {
             ? reviewArray.reduce((sum, review) => sum + (review.rating || 0), 0) / reviewArray.length
             : 0;
 
-          // 🔍 Find first review with an image
           const imageReview = reviewArray.find(r => typeof r.image === 'string' && r.image.trim().startsWith('data:image/'));
           const image = imageReview?.image || '';
 
-          // 📍 Also get a location from any review
           const locationReview = reviewArray.find(r => r.location);
           const location = locationReview?.location || '';
+
+          // 📌 Use lat/lon if available
+          const lat = parseFloat(locationReview?.lat) || null;
+          const lon = parseFloat(locationReview?.lon) || null;
 
           return {
             id: name,
@@ -36,16 +52,25 @@ function Reco({ app, onSelectRestaurant }) {
             rating,
             reviews: reviewArray.length,
             location,
-            image
+            image,
+            lat,
+            lon
           };
         });
+
+        // 📏 Sort by distance if user coordinates available
+        if (userCoords) {
+          list.sort((a, b) => {
+            const distA = a.lat && a.lon ? haversine(userCoords.lat, userCoords.lon, a.lat, a.lon) : Infinity;
+            const distB = b.lat && b.lon ? haversine(userCoords.lat, userCoords.lon, b.lat, b.lon) : Infinity;
+            return distA - distB;
+          });
+        }
+
         setRestaurants(list);
       }
     });
-  }, [db]);
-
-
-
+  }, [db, userCoords]);
 
   const filtered = restaurants.filter(r =>
     r.name.toLowerCase().includes(search.toLowerCase())
@@ -101,6 +126,19 @@ function renderStars(rating) {
   for (let i = 0; i < full; i++) stars.push("★");
   while (stars.length < 5) stars.push("☆");
   return stars.join("");
+}
+
+// 📏 Haversine formula to calculate distance in KM
+function haversine(lat1, lon1, lat2, lon2) {
+  const toRad = deg => deg * (Math.PI / 180);
+  const R = 6371; // Earth radius in KM
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
 }
 
 export default Reco;
