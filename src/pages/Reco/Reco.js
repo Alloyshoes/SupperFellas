@@ -11,7 +11,7 @@ function Reco({ app, onSelectRestaurant }) {
 
   const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
 
-  // 🌍 Get user location on mount
+  //Get user location on mount
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -42,7 +42,7 @@ function Reco({ app, onSelectRestaurant }) {
           const locationReview = reviewArray.find(r => r.location);
           const location = locationReview?.location || '';
 
-          // 📌 Use lat/lon if available
+          //Use lat/lon if available
           const lat = parseFloat(locationReview?.lat) || null;
           const lon = parseFloat(locationReview?.lon) || null;
 
@@ -58,7 +58,7 @@ function Reco({ app, onSelectRestaurant }) {
           };
         });
 
-        // 📏 Sort by distance if user coordinates available
+        //Sort by distance if user coordinates available
         if (userCoords) {
           list.sort((a, b) => {
             const distA = a.lat && a.lon ? haversine(userCoords.lat, userCoords.lon, a.lat, a.lon) : Infinity;
@@ -128,7 +128,7 @@ function renderStars(rating) {
   return stars.join("");
 }
 
-// 📏 Haversine formula to calculate distance in KM
+//Haversine formula to calculate distance in KM
 function haversine(lat1, lon1, lat2, lon2) {
   const toRad = deg => deg * (Math.PI / 180);
   const R = 6371; // Earth radius in KM

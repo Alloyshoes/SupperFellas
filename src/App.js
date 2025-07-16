@@ -6,16 +6,18 @@ import Home from './pages/Home/Home';
 import Reco from './pages/Reco/Reco';
 import RestoDetails from './pages/RestoDetails/RestoDetails';
 import ReccoCreate from './pages/ReccoCreate/ReccoCreate';
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import Orders from './pages/Orders/Orders';
 import GroupOrderPage from './pages/Posts/GroupOrderPage';
 
-// saved in .env file
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+
+// Firebase config from .env
 const firebaseConfig = {
 	apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
 	authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
 	projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID
-}
+};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -24,17 +26,21 @@ function App() {
 	const [selected, setSelected] = useState(null);
 	const location = useLocation();
 	const hideNavbar = location.pathname === '/';
+
 	return (
 		<div className="App">
+			{/* Show navbar on all pages except login */}
 			{!hideNavbar && <Home />}
+
 			<Routes>
-				<Route path="/" element={<LoginSignup auth={auth} />}></Route>
-				<Route path="posts" element={<PostsHome app={app} auth={auth} />}></Route>
-				<Route path="ReccoCreate" element={<ReccoCreate app={app} auth={auth} />}></Route>
-				<Route path="Reco" element={<Reco app={app} auth={auth} onSelectRestaurant={setSelected} />}></Route>
-				<Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selected} />}></Route>
-				<Route path="/order/:id" element={<GroupOrderPage auth={auth} />}></Route>
-				<Route path="*" element={<LoginSignup auth={auth} />}></Route> {/* Unknown page go login page for now */}
+				<Route path="/" element={<LoginSignup auth={auth} />} />
+				<Route path="posts" element={<PostsHome app={app} auth={auth} />} />
+				<Route path="Orders" element={<Orders app={app} auth={auth} />} />
+				<Route path="ReccoCreate" element={<ReccoCreate app={app} auth={auth} />} />
+				<Route path="Reco" element={<Reco app={app} auth={auth} onSelectRestaurant={setSelected} />} />
+				<Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selected} />} />
+				<Route path="/order/:id" element={<GroupOrderPage auth={auth} />} />
+				<Route path="*" element={<LoginSignup auth={auth} />} />
 			</Routes>
 		</div>
 	);
