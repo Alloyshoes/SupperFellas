@@ -1,0 +1,41 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.orders-container {
+  position: absolute;
+  top: 56px; /* height of navbar */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  height: calc(100vh - 56px);
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+}
+
+.locate-button {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: white;
+  border: none;
+  font-size: 22px;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.locate-button:hover {
+  background: #f0f0f0;
+}
+
