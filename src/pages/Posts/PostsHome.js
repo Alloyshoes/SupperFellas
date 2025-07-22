@@ -1,8 +1,8 @@
 import React from "react";
 import Post from "./Post.js";
 import "./Posts.css";
-import { getDatabase, ref, set } from "firebase/database";
-import scrape from "./OrderScraper.js";
+import { getDatabase, ref, set, update } from "firebase/database";
+import { scrape, guessLocation } from "./OrderScraper.js";
 
 class PostsHome extends React.Component {
 	constructor() {
@@ -52,8 +52,14 @@ class PostsHome extends React.Component {
 			else {
 				set(ref(db, "/posts/" + newId), { ...postObj, ...data }).then(() => this.setState({ updated: false }));
 			}
-		});
 
+			// guessLoc
+			// TODO: move scrape and guessloc to be fully async in server
+			var restaurant = data.restaurantName;
+			guessLocation(restaurant).then(data => {
+				update(ref(db, "/posts/" + newId), { coords: data }).then(() => this.setState({ updated: false }));
+			})
+		});
 
 		console.log("Writing to database...")
 		set(ref(db, "/posts/" + newId), postObj).then(() => this.setState({ updated: false }));

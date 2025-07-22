@@ -7,8 +7,11 @@
 // -isaac
 
 const express = require("express");
+const dotenv = require("dotenv");
+dotenv.config();
 const puppeteer = require("puppeteer");
 const cors = require("cors");
+const https = require("https");
 
 const app = express();
 const PORT = 5000;
@@ -20,6 +23,7 @@ app.get("/", async (req, res) => {
 	res.send("Ping!");
 })
 
+// scrape grab restaurant data
 app.post("/api/scrape", async (req, res) => {
 	try {
 		const link = req.body.url;
@@ -64,7 +68,38 @@ app.post("/api/scrape", async (req, res) => {
 		console.error("Error while scraping:", err);
 		res.status(500).json({ error: "Scrape failed!" });
 	}
-})
+});
+
+// guess restaurant location coords
+app.get("/api/guess-loc", async (req, res) => {
+	try {
+		var query = req.query.query;
+		console.log("Guessing location of: '" + query + "'");
+		const endp = "https://www.onemap.gov.sg/api/common/elastic/search?returnGeom=Y&getAddrDetails=N&pageNum=1&searchVal="
+		https.get(endp + query, {
+			headers: { "Authorization": process.env.ONEMAP_API_KEY }
+		}, (resp) => {
+			var data = {};
+			resp.on("data", d => data = d);
+			resp.on("close", () => {
+				data = JSON.parse(data);
+				console.log(data);
+
+				if (data.found === 0) {
+					res.json({});
+					return;
+				}
+				var d = data.results[0];
+				res.json([d.LATITUDE, d.LONGITUDE]);
+			})
+		});
+
+	} catch (err) {
+		console.error("Error while guessing location coords:", err);
+		res.status(500).json({ error: "Guess location failed!" });
+	}
+});
+
 
 app.listen(PORT, () => {
 	console.log("Server listening on PORT " + PORT);
