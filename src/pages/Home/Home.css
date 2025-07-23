@@ -3,12 +3,12 @@
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #343a40; /* matches Razor Pages navbar bg */
+  background-color: #343a40;
   color: #fff;
   height: 56px;
   display: flex;
   align-items: center;
-  z-index: 1030; /* similar to Bootstrap's navbar z-index */
+  z-index: 1030;
   font-family: system-ui, -apple-system, sans-serif;
 }
 
@@ -19,25 +19,24 @@
   padding: 0 15px;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* NEW: pushes brand to left, links to right */
+  justify-content: space-between;
 }
 
-
 .navbar-brand {
-  font-weight: 500; /* matches Bootstrap brand weight */
+  font-weight: 500;
   font-size: 20px;
   color: white;
   text-decoration: none;
-  margin-right: 30px; /* typical space between brand & links */
+  margin-right: 30px;
 }
 
 .navbar-links {
   display: flex;
-  gap: 20px; /* ~1.25rem space between links */
+  gap: 20px;
 }
 
 .navbar-link {
-  color: rgba(255, 255, 255, 0.55); /* muted white like Razor Pages links */
+  color: rgba(255, 255, 255, 0.55);
   text-decoration: none;
   font-size: 16px;
   transition: color 0.2s ease;
@@ -45,11 +44,18 @@
 
 .navbar-link:hover,
 .navbar-link:focus {
-  color: rgba(255, 255, 255, 0.75); /* slightly brighter on hover */
+  color: rgba(255, 255, 255, 0.75);
 }
 
-/* Prevent content from hiding behind navbar */
-body {
+/* Wrapper for routed content */
+.page-content-wrapper {
+  padding-top: 56px; /* Same as navbar height */
+
+}
+
+html, body {
   margin: 0;
-  padding-top: 56px; /* navbar height */
+  padding: 0;
+  height: 100%;
+  overflow-y: auto; /* This enables scrolling */
 }
