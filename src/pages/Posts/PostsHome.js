@@ -1,8 +1,8 @@
 import React from "react";
 import Post from "./Post.js";
 import "./Posts.css";
-import { getDatabase, ref, set } from "firebase/database";
-import scrape from "./OrderScraper.js";
+import { getDatabase, ref, set, update } from "firebase/database";
+import { scrape, guessLocation } from "./OrderScraper.js";
 
 class PostsHome extends React.Component {
 	constructor() {
@@ -47,13 +47,18 @@ class PostsHome extends React.Component {
 			joinedUsers: [this.state.user.email]
 		}
 		// order scraper action insert
-		scrape(this.state.postLink).then(data => {
+		scrape(this.state.postLink, newId).then(data => {
 			if (data === null) alert("Link is invalid!");
-			else {
-				set(ref(db, "/posts/" + newId), { ...postObj, ...data }).then(() => this.setState({ updated: false }));
-			}
-		});
+			this.setState({ updated: false });
 
+			// this linkage is done server-side too
+			// // guessLoc
+			// var restaurant = data.restaurantName;
+			// guessLocation(restaurant, newId).then(data => {
+			// 	console.log("Guessed coordinates: " + data);
+			// 	this.setState({ updated: false });
+			// })
+		});
 
 		console.log("Writing to database...")
 		set(ref(db, "/posts/" + newId), postObj).then(() => this.setState({ updated: false }));
