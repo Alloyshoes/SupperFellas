@@ -40,9 +40,9 @@ const GroupOrderPage = props => {
 	}
 
 	function sendMessage() {
-		// set limit for demo (10 messages)
-		if (chat.length >= 10) {
-			console.log("[DEMO] For testing purposes, chat messages per group order post is limited to 10!");
+		// set limit for demo
+		if (chat.length >= 15) {
+			alert("[DEMO] For testing purposes, chat messages per group order post is limited to 15!");
 			return;
 		}
 
@@ -57,20 +57,8 @@ const GroupOrderPage = props => {
 
 	function handleClose() {
 		if (!window.confirm("Are you sure you want to close this group order? This action cannot be undone.")) return;
-
-		// add recommendation/review after close order
-		if (!window.confirm("Do you want to leave a review for your order?")) {
-			remove(ref(db, "/posts/" + id));
-			navigate("/Posts");
-			return;
-		}
-
-		setReviewingStatus(true);
-	}
-
-	function reviewSubmit() {
-		// TODO: submit review (via static function)
-		// then properly close
+		remove(ref(db, "/posts/" + id));
+		navigate("/Posts");
 	}
 
 	if (user === null) return <div></div>;

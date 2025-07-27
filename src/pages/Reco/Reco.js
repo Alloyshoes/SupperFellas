@@ -11,7 +11,6 @@ function Reco({ app, onSelectRestaurant }) {
 
   const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
 
-  //Get user location on mount
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -25,50 +24,57 @@ function Reco({ app, onSelectRestaurant }) {
   }, []);
 
   useEffect(() => {
-    const recoRef = ref(db, 'recommendations');
-    get(recoRef).then(snapshot => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        const list = Object.keys(data).map(name => {
-          const allReviews = data[name].reviews || {};
-          const reviewArray = Object.values(allReviews);
-          const rating = reviewArray.length > 0
-            ? reviewArray.reduce((sum, review) => sum + (review.rating || 0), 0) / reviewArray.length
-            : 0;
+    const recoRef = ref(db, 'Reccomendations');
+    const postsRef = ref(db, 'posts');
 
-          const imageReview = reviewArray.find(r => typeof r.image === 'string' && r.image.trim().startsWith('data:image/'));
-          const image = imageReview?.image || '';
+    Promise.all([get(recoRef), get(postsRef)]).then(([recoSnap, postSnap]) => {
+      if (!recoSnap.exists()) return;
 
-          const locationReview = reviewArray.find(r => r.location);
-          const location = locationReview?.location || '';
+      const recoData = recoSnap.val();
+      const postData = postSnap.exists() ? postSnap.val() : {};
 
-          //Use lat/lon if available
-          const lat = parseFloat(locationReview?.lat) || null;
-          const lon = parseFloat(locationReview?.lon) || null;
-
-          return {
-            id: name,
-            name,
-            rating,
-            reviews: reviewArray.length,
-            location,
-            image,
-            lat,
-            lon
-          };
-        });
-
-        //Sort by distance if user coordinates available
-        if (userCoords) {
-          list.sort((a, b) => {
-            const distA = a.lat && a.lon ? haversine(userCoords.lat, userCoords.lon, a.lat, a.lon) : Infinity;
-            const distB = b.lat && b.lon ? haversine(userCoords.lat, userCoords.lon, b.lat, b.lon) : Infinity;
-            return distA - distB;
-          });
+      const addressMap = {};
+      Object.entries(postData).forEach(([postId, post]) => {
+        if (post.restaurantName && post.address) {
+          addressMap[post.restaurantName] = post.address;
         }
+      });
 
-        setRestaurants(list);
+      const list = Object.entries(recoData).map(([restaurantName, userReviews]) => {
+        const reviewArray = Object.values(userReviews);
+        const rating = reviewArray.length > 0
+          ? reviewArray.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewArray.length
+          : 0;
+
+        const imageReview = reviewArray.find(r => typeof r.image === 'string' && r.image.trim().startsWith('data:image/'));
+        const image = imageReview?.image || '';
+
+        const coords = reviewArray.find(r => r.coords)?.coords || {};
+        const lat = parseFloat(coords.lat || coords[0]) || null;
+        const lon = parseFloat(coords.lon || coords[1]) || null;
+        const address = addressMap[restaurantName] || 'No address provided';
+
+        return {
+          id: restaurantName,
+          name: restaurantName,
+          rating,
+          reviews: reviewArray.length,
+          location: address,
+          image,
+          lat,
+          lon
+        };
+      });
+
+      if (userCoords) {
+        list.sort((a, b) => {
+          const distA = a.lat && a.lon ? haversine(userCoords.lat, userCoords.lon, a.lat, a.lon) : Infinity;
+          const distB = b.lat && b.lon ? haversine(userCoords.lat, userCoords.lon, b.lat, b.lon) : Infinity;
+          return distA - distB;
+        });
       }
+
+      setRestaurants(list);
     });
   }, [db, userCoords]);
 
@@ -109,7 +115,7 @@ function Reco({ app, onSelectRestaurant }) {
               <h3>{r.name}</h3>
               <div className="meta">
                 <span className="stars">{renderStars(r.rating)}</span>
-                <span className="reviews">({r.reviews} reviews)</span>
+                <span className="reviews">({r.reviews > 0 ? `${r.reviews} reviews` : 'No reviews'})</span>
               </div>
               <div className="location">{r.location}</div>
             </div>
@@ -128,10 +134,9 @@ function renderStars(rating) {
   return stars.join("");
 }
 
-//Haversine formula to calculate distance in KM
 function haversine(lat1, lon1, lat2, lon2) {
   const toRad = deg => deg * (Math.PI / 180);
-  const R = 6371; // Earth radius in KM
+  const R = 6371;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a = Math.sin(dLat / 2) ** 2 +

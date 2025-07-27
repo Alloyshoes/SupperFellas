@@ -1,122 +1,160 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getDatabase, ref, get, update } from 'firebase/database';
-import './RestoDetails.css';
+import { getDatabase, ref, get, set } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
+import './RestoDetails.css';
+import { Navigate } from 'react-router-dom';
 
-function RestoDetails({ app, auth, restaurant }) {
-  const navigate = useNavigate();
+function RestoDetails({ app, selectedRestaurant }) {
   const [reviews, setReviews] = useState([]);
-  const [userReview, setUserReview] = useState('');
-  const [userRating, setUserRating] = useState('5');
+  const [ratingsCount, setRatingsCount] = useState({});
+  const [avgRating, setAvgRating] = useState(0);
+  const [userReview, setUserReview] = useState({ rating: 5, review: '', image: '' });
+  const auth = getAuth(app);
+  const user = auth.currentUser;
 
-  const user = getAuth().currentUser;
-  const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
+  const update = () => {
+    if (!selectedRestaurant?.name) return;
 
-  useEffect(() => {
-    if (!restaurant) return;
+    const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
+    const recoRef = ref(db, `Reccomendations/${selectedRestaurant.name}`);
 
-    const restaurantRef = ref(db, `recommendations/${restaurant.id}/reviews`);
-    get(restaurantRef).then(snapshot => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        setReviews(Object.values(data));
+    get(recoRef).then(snapshot => {
+      if (!snapshot.exists()) return;
+
+      const data = snapshot.val();
+      const reviewsArray = Object.entries(data || {}).map(([email, value]) => ({ ...value, email }));
+
+      let totalRating = 0;
+      const countByRating = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
+      reviewsArray.forEach(r => {
+        if (r.rating) {
+          totalRating += r.rating;
+          countByRating[r.rating] = (countByRating[r.rating] || 0) + 1;
+        }
+      });
+
+      setReviews(reviewsArray);
+      setRatingsCount(countByRating);
+      setAvgRating(reviewsArray.length > 0 ? totalRating / reviewsArray.length : 0);
+
+      if (user) {
+        const userKey = user.email.replace(/\./g, '_');
+        if (data[userKey]) setUserReview(data[userKey]);
       }
     });
-  }, [db, restaurant]);
-
-  const handleSubmitReview = async () => {
-    if (!user) {
-      alert("Please login to submit a review.");
-      return;
-    }
-
-    const safeEmail = user.email.replace(/\./g, '_');
-    const reviewRef = ref(db, `recommendations/${restaurant.id}/reviews/${safeEmail}`);
-
-    const newReview = {
-      rating: parseInt(userRating),
-      review: userReview,
-      timestamp: Date.now(),
-      user: user.email
-    };
-
-
-    // Only update rating and review
-    await update(reviewRef, newReview);
-
-    // Refresh reviews list
-    const updatedSnapshot = await get(ref(db, `recommendations/${restaurant.id}/reviews`));
-    if (updatedSnapshot.exists()) {
-      setReviews(Object.values(updatedSnapshot.val()));
-    }
-
-    setUserReview('');
-    setUserRating('5');
-  };
-
-  if (!restaurant) {
-    return (
-      <div className="detail-page">
-        <p>No restaurant selected. Go back to <button onClick={() => navigate('/Reco')}>search</button>.</p>
-      </div>
-    );
   }
 
-  const ratingsCount = [1, 2, 3, 4, 5].map(rating =>
-    reviews.filter(r => r.rating === rating).length
-  );
+  useEffect(() => {
+    update();
+  }, [app, selectedRestaurant, user]);
+
+  const renderStars = (rating) => {
+    return [...Array(5)].map((_, i) =>
+      <span key={i}>{i < rating ? '★' : '☆'}</span>
+    );
+  };
+
+  const handleUpdate = () => {
+    if (!user || !selectedRestaurant?.name) return;
+    const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
+    const userKey = user.email.replace(/\./g, '_');
+    const userRef = ref(db, `Reccomendations/${selectedRestaurant.name}/${userKey}`);
+
+    set(userRef, userReview).then(() => {
+      alert("Review updated!");
+
+      update();
+    });
+
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setUserReview(prev => ({ ...prev, image: reader.result }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const totalReviews = reviews.length;
+
+  // for no selected restaurant
+  if (selectedRestaurant === null) return <Navigate to="/Reco" />
 
   return (
-    <div className="detail-page">
-      <button className="back-button" onClick={() => navigate('/Reco')}>← Back to search</button>
-      <div className="detail-header">
-        <h2>{restaurant.name}</h2>
-        <div className="detail-meta">
-          <span className="stars">{renderStars(restaurant.rating)}</span>
-          <span className="reviews">({restaurant.reviews} reviews)</span>
+    <div className="resto-details-container">
+      <h2 className="resto-title">{selectedRestaurant?.name}</h2>
+      <p className="resto-address">{selectedRestaurant?.location}</p>
+
+      <div className="resto-summary">
+        <div className="resto-avg-rating">
+          <div className="avg-num">{avgRating.toFixed(1)}</div>
+          <div className="stars">{renderStars(Math.round(avgRating))}</div>
+          <div className="total">{totalReviews} reviews</div>
         </div>
-        <p className="detail-location">{restaurant.location}</p>
-        {restaurant.image && <img src={restaurant.image} alt={restaurant.name} style={{ maxWidth: "300px", marginTop: "10px" }} />}
+
+        <div className="resto-rating-breakdown">
+          {[5, 4, 3, 2, 1].map(star => (
+            <div className="resto-bar-row" key={star}>
+              <span>{star} star</span>
+              <div className="resto-bar">
+                <div className="resto-fill" style={{
+                  width: totalReviews > 0
+                    ? `${(ratingsCount[star] || 0) / totalReviews * 100}%`
+                    : '0%'
+                }} />
+              </div>
+              <span>{ratingsCount[star] || 0}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="ratings-breakdown">
-        <h3>Ratings Breakdown</h3>
-        {[5, 4, 3, 2, 1].map((star, i) => (
-          <p key={star}>{star} stars: {'█'.repeat(ratingsCount[star - 1])}</p>
-        ))}
-      </div>
-
-      <div className="review-list">
-        <h3>Reviews</h3>
+      <div className="resto-reviews">
         {reviews.map((r, idx) => (
-          <div key={idx} className="review">
-            <p className="review-user">{r.user} - {renderStars(r.rating)}</p>
-            <p className="review-text">{r.review}</p>
+          <div key={idx} className="resto-review-card">
+            {r.image && <img src={r.image} alt="Review" className="resto-review-image" />}
+            <div className="resto-review-content">
+              <div className="stars">{renderStars(r.rating)}</div>
+              <p>{r.review}</p>
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="submit-review">
-        <h3>Submit/Update Your Review</h3>
-        <label>Rating</label>
-        <select value={userRating} onChange={(e) => setUserRating(e.target.value)}>
-          {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
-        </select>
-        <label>Review</label>
-        <textarea value={userReview} onChange={(e) => setUserReview(e.target.value)} rows="4" />
-        <button onClick={handleSubmitReview}>Submit Review</button>
-      </div>
+      {user && (
+        <div className="resto-update-form">
+          <h3>Update Your Recommendation</h3>
+          <label>
+            Rating:
+            <select value={userReview.rating} onChange={e => setUserReview({ ...userReview, rating: parseInt(e.target.value) })}>
+              {[5, 4, 3, 2, 1].map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+          </label>
+          <label>
+            Review:
+            <textarea
+              value={userReview.review}
+              onChange={e => setUserReview({ ...userReview, review: e.target.value })}
+            />
+          </label>
+          <label>
+            Upload Image:
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
+          </label>
+          <button onClick={handleUpdate}>Submit</button>
+        </div>
+      )}
     </div>
   );
-}
-
-function renderStars(rating) {
-  const stars = [];
-  const full = Math.floor(rating);
-  for (let i = 0; i < full; i++) stars.push("★");
-  while (stars.length < 5) stars.push("☆");
-  return stars.join("");
 }
 
 export default RestoDetails;
