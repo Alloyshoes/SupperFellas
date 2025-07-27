@@ -1,8 +1,9 @@
 import React from "react";
 import Post from "./Post.js";
 import "./Posts.css";
-import { getDatabase, ref, set, update } from "firebase/database";
+import { get, getDatabase, ref, set, update } from "firebase/database";
 import { scrape, guessLocation } from "./OrderScraper.js";
+import { getAuth } from "firebase/auth";
 
 class PostsHome extends React.Component {
 	constructor() {
@@ -11,7 +12,11 @@ class PostsHome extends React.Component {
 	}
 
 	componentDidMount() {
-		this.setState({ user: localStorage.getItem("user"), updated: false });
+		const auth = getAuth();
+		auth.authStateReady().then(() => {
+			this.setState({ user: auth.currentUser, updated: false });
+			console.log(auth.currentUser)
+		})
 
 		if (this.state.user === null) {
 			console.error("You are not logged in!");
@@ -66,7 +71,7 @@ class PostsHome extends React.Component {
 
 	render() {
 		if (this.state.user === null) {
-			return <div style={{ fontSize: 100, textAlign: "center", color: "red" }}>You are not logged in!</div>
+			return <div style={{ fontSize: 100, textAlign: "center" }}>Loading...</div>
 		}
 
 		// hack-y way to get data from database lol

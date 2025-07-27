@@ -2,6 +2,7 @@ import { get, getDatabase, ref, set } from "firebase/database";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import grabLogo from "../../assets/providers/grab-logo.png";
+import { getAuth } from "firebase/auth";
 
 // The Group Order page is unique to each post, identified by the post ID.
 // Includes: group order details, join order, chat feature
@@ -13,6 +14,8 @@ const GroupOrderPage = props => {
 	const [chat, setChat] = useState([]);
 	const [msg, setMsg] = useState("");
 	const [updated, setStatus] = useState(false);
+
+	const user = getAuth().currentUser;
 
 	if (!updated) {
 		get(ref(db, "/posts/" + id)).then(r => {
@@ -33,12 +36,12 @@ const GroupOrderPage = props => {
 			return;
 		}
 
-		set(ref(db, "/chat_data/" + id), [...chat, { from: props.auth.currentUser.email, text: msg }]).then(() => setStatus(false));
+		set(ref(db, "/chat_data/" + id), [...chat, { from: user.email, text: msg }]).then(() => setStatus(false));
 		setMsg("");
 	}
 
 	function handleJoin() {
-		set(ref(db, "/posts/" + id + "/joinedUsers"), [...post.joinedUsers, props.auth.currentUser.email]).then(() => setStatus(false));
+		set(ref(db, "/posts/" + id + "/joinedUsers"), [...post.joinedUsers, user.email]).then(() => setStatus(false));
 	}
 
 	return <div className="grouporder-container">
@@ -54,7 +57,7 @@ const GroupOrderPage = props => {
 		<p><strong>Distance:</strong> {post.distanceInfo}</p>
 		<p><strong>Cuisine:</strong> {post.cuisineInfo}</p>
 
-		{!post.joinedUsers?.includes(props.auth.currentUser.email) && <button className="join-button" onClick={handleJoin}>Join Group Order</button>}
+		{!post.joinedUsers?.includes(user.email) && <button className="join-button" onClick={handleJoin}>Join Group Order</button>}
 
 		<hr />
 

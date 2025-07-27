@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDatabase, ref, get, update } from 'firebase/database';
 import './RestoDetails.css';
+import { getAuth } from 'firebase/auth';
 
 function RestoDetails({ app, auth, restaurant }) {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ function RestoDetails({ app, auth, restaurant }) {
   const [userReview, setUserReview] = useState('');
   const [userRating, setUserRating] = useState('5');
 
-  const user = localStorage.getItem("user");
+  const user = getAuth().currentUser;
   const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
 
   useEffect(() => {

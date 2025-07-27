@@ -1,6 +1,7 @@
 import React from 'react';
 import { getDatabase, ref, set } from 'firebase/database';
 import './ReccoCreate.css';
+import { getAuth } from 'firebase/auth';
 
 class ReccoCreate extends React.Component {
   constructor(props) {
@@ -24,7 +25,7 @@ class ReccoCreate extends React.Component {
     e.preventDefault();
 
     const { name, rating, location, lat, lon, imageFile, review, selectedSuggestion } = this.state;
-    const user = localStorage.getItem("user");
+    const user = getAuth().currentUser;
 
     if (!user || !name || !rating || !location || !imageFile || !review || !selectedSuggestion) {
       alert('All fields are required and a valid location must be selected.');
