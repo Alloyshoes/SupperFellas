@@ -12,7 +12,7 @@ function Home() {
             <Link to="/Posts" className="navbar-link">Home</Link>
             <Link to="/Orders" className="navbar-link">Orders</Link>
             <Link to="/Reco" className="navbar-link">Recommendations</Link>
-            <Link to="/Posts" className="navbar-link">Posts</Link>
+            <Link to="/Guide" className="navbar-link">Guide</Link>
           </div>
         </div>
       </nav>

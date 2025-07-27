@@ -11,6 +11,7 @@ import Home from './pages/Home/Home'; // Layout wrapper
 
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import GuidePage from './pages/Guide/Guide';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -37,6 +38,7 @@ function App() {
         <Route path="ReccoCreate" element={<ReccoCreate app={app} auth={auth} />} />
         <Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selected} />} />
         <Route path="/order/:id" element={<GroupOrderPage auth={auth} />} />
+        <Route path="/guide" element={<GuidePage />} />
       </Route>
 
       {/* Catch-all fallback */}
