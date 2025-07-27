@@ -1,43 +1,85 @@
-.recco-create-container {
+.recco-form-container {
   max-width: 600px;
-  margin: 40px auto;
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-  font-family: sans-serif;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #fdfdfd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.recco-create-container h2 {
+.recco-form-container h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
+  color: #333;
 }
 
-.recco-create-container form {
+.recco-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 1rem;
 }
 
-.recco-create-container input[type="text"],
-.recco-create-container select,
-.recco-create-container input[type="file"],
-.recco-create-container textarea {
-  padding: 10px;
-  font-size: 16px;
+.recco-form label {
+  font-weight: 600;
+  color: #444;
+}
+
+.recco-form input[type='text'],
+.recco-form input[type='file'],
+.recco-form select,
+.recco-form textarea {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
   width: 100%;
+  box-sizing: border-box;
 }
 
-.recco-create-container button {
-  padding: 12px;
-  background-color: #007bff;
+.recco-form select {
+  background-color: #fff;
+}
+
+.recco-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.image-preview {
+  margin-top: 0.5rem;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.recco-form button {
+  padding: 0.75rem;
+  background-color: #00b894;
   color: white;
-  font-size: 16px;
+  font-size: 1rem;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
-  border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
 
-.recco-create-container button:hover {
-  background-color: #0056b3;
+.recco-form button:hover {
+  background-color: #019875;
+}
+
+@media (max-width: 600px) {
+  .recco-form-container {
+    padding: 1rem;
+  }
+
+  .recco-form {
+    gap: 0.75rem;
+  }
+
+  .recco-form button {
+    font-size: 0.95rem;
+  }
 }

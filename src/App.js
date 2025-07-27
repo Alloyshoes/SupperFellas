@@ -7,7 +7,7 @@ import Reco from './pages/Reco/Reco';
 import RestoDetails from './pages/RestoDetails/RestoDetails';
 import ReccoCreate from './pages/ReccoCreate/ReccoCreate';
 import GroupOrderPage from './pages/Posts/GroupOrderPage';
-import Home from './pages/Home/Home'; // Layout wrapper
+import Home from './pages/Home/Home';
 
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
@@ -22,24 +22,24 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 function App() {
-  const [selected, setSelected] = useState(null);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
   return (
     <Routes>
-      {/* Pages without nav */}
+      {/* Pages without navbar */}
       <Route path="/" element={<LoginSignup auth={auth} />} />
 
-      {/* Pages with navbar layout */}
+      {/* Pages wrapped with navbar layout */}
       <Route element={<Home />}>
         <Route path="Posts" element={<PostsHome app={app} auth={auth} />} />
         <Route path="Orders" element={<Orders app={app} auth={auth} />} />
-        <Route path="Reco" element={<Reco app={app} auth={auth} onSelectRestaurant={setSelected} />} />
+        <Route path="Reco" element={<Reco app={app} auth={auth} onSelectRestaurant={setSelectedRestaurant} />} />
         <Route path="ReccoCreate" element={<ReccoCreate app={app} auth={auth} />} />
-        <Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selected} />} />
-        <Route path="/order/:id" element={<GroupOrderPage auth={auth} />} />
+        <Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} selectedRestaurant={selectedRestaurant} />} />
+        <Route path="order/:id" element={<GroupOrderPage auth={auth} />} />
       </Route>
 
-      {/* Catch-all fallback */}
+      {/* Fallback route */}
       <Route path="*" element={<LoginSignup auth={auth} />} />
     </Routes>
   );

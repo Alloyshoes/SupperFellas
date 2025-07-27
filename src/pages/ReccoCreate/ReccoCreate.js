@@ -1,165 +1,134 @@
-import React from 'react';
-import { get, getDatabase, ref, set } from 'firebase/database';
+import React, { useState, useEffect } from 'react';
 import './ReccoCreate.css';
 import { getAuth } from 'firebase/auth';
 
-class ReccoCreate extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: '',
-      rating: '5',
-      location: '',
-      lat: '',
-      lon: '',
-      imageFile: null,
-      review: '',
-      suggestions: [],
-      submitted: false,
-      selectedSuggestion: null,
-    };
-    this.debounceTimeout = null;
-  }
+function ReccoCreate({ app }) {
+  const auth = getAuth(app);
+  const [posts, setPosts] = useState({});
+  const [selectedPostId, setSelectedPostId] = useState('');
+  const [rating, setRating] = useState('');
+  const [review, setReview] = useState('');
+  const [imageData, setImageData] = useState('');
+  const [address, setAddress] = useState('');
 
-  handleSubmit = async (e) => {
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT}/posts.json`)
+      .then(res => res.json())
+      .then(data => {
+        if (data) setPosts(data);
+      })
+      .catch(err => console.error('Error loading posts:', err));
+  }, []);
+
+  useEffect(() => {
+    const rec = posts[selectedPostId];
+    if (rec && rec.coords && rec.coords.length === 2) {
+      const [lat, lon] = rec.coords;
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+        .then(res => res.json())
+        .then(js => setAddress(js.display_name || ''))
+        .catch(() => setAddress(''));
+    } else {
+      setAddress('');
+    }
+  }, [selectedPostId, posts]);
+
+  const handleImageChange = e => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => setImageData(reader.result);
+    if (file) reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async e => {
     e.preventDefault();
-
-    const db = getDatabase(this.props.app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
-    const recoList = await get(ref(db, "recommendations"))
-    // set limit for demo
-    if (Object.keys(recoList).length >= 10) {
-      alert("[DEMO] For testing purposes, number of recommendation posts limited to 10!");
+    const user = auth.currentUser;
+    if (!user || !selectedPostId || !rating || !review) {
+      alert('Fill all required fields');
       return;
     }
 
-    const { name, rating, location, lat, lon, imageFile, review, selectedSuggestion } = this.state;
-    const user = getAuth().currentUser;
-
-    if (!user || !name || !rating || !location || !imageFile || !review || !selectedSuggestion) {
-      alert('All fields are required and a valid location must be selected.');
+    const selectedPost = posts[selectedPostId];
+    const restaurantName = selectedPost?.restaurantName;
+    if (!restaurantName) {
+      alert('Selected post does not have a restaurant name.');
       return;
     }
 
-    const imageUrl = await this.uploadImage(imageFile);
-    const safeEmail = user.email.replace(/\./g, '_');
-
-    const newReview = {
+    const emailKey = user.email.replace(/[.#$[\]]/g, '_');
+    const reviewPayload = {
       user: user.email,
-      name,
-      rating: parseInt(rating),
-      location,
-      lat,
-      lon,
-      image: imageUrl,
+      rating: Number(rating),
       review,
+      image: imageData,
+      address,
       timestamp: Date.now()
     };
 
-    await set(ref(db, `recommendations/${name}/reviews/${safeEmail}`), newReview);
-    this.setState({ submitted: true });
-  };
+    const idToken = await user.getIdToken();
+    const path = `Reccomendations/${encodeURIComponent(restaurantName)}/${emailKey}`;
+    const url = `${process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT}/${path}.json?auth=${idToken}`;
 
-  uploadImage = async (file) => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result); // base64 string
-      reader.readAsDataURL(file);
-    });
-  };
-
-  handleLocationChange = (e) => {
-    const value = e.target.value;
-    this.setState({
-      location: value,
-      selectedSuggestion: null,
-      lat: '',
-      lon: ''
-    });
-
-    if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
-    this.debounceTimeout = setTimeout(() => {
-      if (value.length > 2) {
-        this.fetchLocationSuggestions(value);
-      }
-    }, 300);
-  };
-
-  fetchLocationSuggestions = async (query) => {
-    const apiKey = process.env.REACT_APP_LOCATIONIQ_API_KEY;
-    const url = `https://api.locationiq.com/v1/autocomplete?key=${apiKey}&q=${encodeURIComponent(query)}&limit=5&format=json&countrycodes=sg`;
-
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        this.setState({ suggestions: data });
-      } else {
-        console.error('Unexpected response:', data);
-        this.setState({ suggestions: [] });
-      }
-    } catch (err) {
-      console.error('Location autocomplete error:', err);
-      this.setState({ suggestions: [] });
-    }
-  };
-
-  handleLocationSelect = (value) => {
-    const selected = this.state.suggestions.find(s => s.display_name === value);
-    if (selected) {
-      this.setState({
-        location: selected.display_name,
-        lat: selected.lat,
-        lon: selected.lon,
-        selectedSuggestion: selected
+    fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reviewPayload)
+    })
+      .then(res => {
+        if (!res.ok) throw new Error(`code ${res.status}`);
+        alert('Review saved!');
+        setSelectedPostId('');
+        setRating('');
+        setReview('');
+        setImageData('');
+        setAddress('');
+      })
+      .catch(err => {
+        console.error('Error writing review:', err);
+        alert('Failed to submit review.');
       });
-    }
   };
 
-  render() {
-    const { name, rating, location, review, submitted, suggestions } = this.state;
+  return (
+    <div className="recco-form-container">
+      <h2>Submit Review</h2>
+      <form className="recco-form" onSubmit={handleSubmit}>
+        <label>Restaurant</label>
+        <select value={selectedPostId} onChange={e => setSelectedPostId(e.target.value)} required>
+          <option value="">Select a post</option>
+          {Object.entries(posts).map(([id, p]) => (
+            <option key={id} value={id}>
+              {p.restaurantName || `Post ${id}`}
+            </option>
+          ))}
+        </select>
 
-    if (submitted) {
-      return <div className="recco-create-container"><h2>Recommendation Submitted!</h2></div>;
-    }
+        <label>Rating</label>
+        <select value={rating} onChange={e => setRating(e.target.value)} required>
+          <option value="">1–5</option>
+          {[1, 2, 3, 4, 5].map(n => (
+            <option key={n} value={n}>{n}</option>
+          ))}
+        </select>
 
-    return (
-      <div className="recco-create-container">
-        <h2>Create a Restaurant Recommendation</h2>
-        <form onSubmit={this.handleSubmit}>
-          <label>Restaurant Name</label>
-          <input type="text" value={name} onChange={(e) => this.setState({ name: e.target.value })} />
+        <label>Review</label>
+        <textarea value={review} onChange={e => setReview(e.target.value)} required />
 
-          <label>Rating</label>
-          <select value={rating} onChange={(e) => this.setState({ rating: e.target.value })}>
-            {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
-          </select>
+        <label>Upload Image</label>
+        <input type="file" accept="image/*" onChange={handleImageChange} />
+        {imageData && <img src={imageData} alt="preview" className="image-preview" />}
 
-          <label>Location</label>
-          <input
-            list="location-suggestions"
-            type="text"
-            value={location}
-            onChange={this.handleLocationChange}
-            onBlur={(e) => this.handleLocationSelect(e.target.value)}
-            placeholder="Start typing address..."
-          />
-          <datalist id="location-suggestions">
-            {suggestions.map((s, idx) => (
-              <option key={idx} value={s.display_name} />
-            ))}
-          </datalist>
+        {address && (
+          <>
+            <label>Address</label>
+            <input type="text" value={address} readOnly />
+          </>
+        )}
 
-          <label>Upload Image</label>
-          <input type="file" accept="image/*" onChange={(e) => this.setState({ imageFile: e.target.files[0] })} />
-
-          <label>Review</label>
-          <textarea rows="4" value={review} onChange={(e) => this.setState({ review: e.target.value })}></textarea>
-
-          <button type="submit">Submit Recommendation</button>
-        </form>
-      </div>
-    );
-  }
+        <button type="submit">Submit Review</button>
+      </form>
+    </div>
+  );
 }
 
 export default ReccoCreate;
