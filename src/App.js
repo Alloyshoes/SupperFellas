@@ -36,7 +36,7 @@ function App() {
         <Route path="Orders" element={<Orders app={app} auth={auth} />} />
         <Route path="Reco" element={<Reco app={app} auth={auth} onSelectRestaurant={setSelectedRestaurant} />} />
         <Route path="ReccoCreate" element={<ReccoCreate app={app} auth={auth} />} />
-        <Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selected} />} />
+        <Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selectedRestaurant} />} />
         <Route path="/order/:id" element={<GroupOrderPage auth={auth} />} />
         <Route path="/guide" element={<GuidePage />} />
       </Route>
