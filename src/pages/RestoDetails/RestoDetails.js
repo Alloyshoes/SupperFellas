@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getDatabase, ref, get, set } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import './RestoDetails.css';
+import { Navigate } from 'react-router-dom';
 
 function RestoDetails({ app, selectedRestaurant }) {
   const [reviews, setReviews] = useState([]);
@@ -12,7 +13,7 @@ function RestoDetails({ app, selectedRestaurant }) {
   const auth = getAuth(app);
   const user = auth.currentUser;
 
-  useEffect(() => {
+  const update = () => {
     if (!selectedRestaurant?.name) return;
 
     const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
@@ -43,6 +44,10 @@ function RestoDetails({ app, selectedRestaurant }) {
         if (data[userKey]) setUserReview(data[userKey]);
       }
     });
+  }
+
+  useEffect(() => {
+    update();
   }, [app, selectedRestaurant, user]);
 
   const renderStars = (rating) => {
@@ -60,27 +65,7 @@ function RestoDetails({ app, selectedRestaurant }) {
     set(userRef, userReview).then(() => {
       alert("Review updated!");
 
-      // Refresh only the relevant state without full reload
-      const updatedReviews = [...reviews];
-      const index = updatedReviews.findIndex(r => r.email === user.email);
-      const updatedUserReview = { ...userReview, email: user.email };
-
-      if (index !== -1) {
-        updatedReviews[index] = updatedUserReview;
-      } else {
-        updatedReviews.push(updatedUserReview);
-      }
-
-      setReviews(updatedReviews);
-
-      const totalRating = updatedReviews.reduce((sum, r) => sum + (r.rating || 0), 0);
-      const newCountByRating = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-      updatedReviews.forEach(r => {
-        if (r.rating) newCountByRating[r.rating]++;
-      });
-
-      setRatingsCount(newCountByRating);
-      setAvgRating(updatedReviews.length ? totalRating / updatedReviews.length : 0);
+      update();
     });
 
   };
@@ -98,6 +83,9 @@ function RestoDetails({ app, selectedRestaurant }) {
   };
 
   const totalReviews = reviews.length;
+
+  // for no selected restaurant
+  if (selectedRestaurant === null) return <Navigate to="/Reco" />
 
   return (
     <div className="resto-details-container">
