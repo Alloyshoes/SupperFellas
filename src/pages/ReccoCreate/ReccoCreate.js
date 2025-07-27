@@ -79,7 +79,7 @@ class ReccoCreate extends React.Component {
 
   fetchLocationSuggestions = async (query) => {
     const apiKey = process.env.REACT_APP_LOCATIONIQ_API_KEY;
-    const url = `https://api.locationiq.com/v1/autocomplete?key=${apiKey}&q=${encodeURIComponent(query)}&limit=5&format=json`;
+    const url = `https://api.locationiq.com/v1/autocomplete?key=${apiKey}&q=${encodeURIComponent(query)}&limit=5&format=json&countrycodes=sg`;
 
     try {
       const res = await fetch(url);
