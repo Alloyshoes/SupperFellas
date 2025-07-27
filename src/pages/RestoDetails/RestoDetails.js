@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { getDatabase, ref, get, set } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import './RestoDetails.css';
-import { getAuth } from 'firebase/auth';
 import { Navigate } from 'react-router-dom';
 
 function RestoDetails({ app, selectedRestaurant }) {

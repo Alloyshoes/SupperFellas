@@ -51,6 +51,7 @@ const GroupOrderPage = props => {
 	}
 
 	function handleClose() {
+		if (!window.confirm("Are you sure you want to close this group order? This action cannot be undone.")) return;
 		remove(ref(db, "/posts/" + id));
 		navigate("/Posts");
 	}
