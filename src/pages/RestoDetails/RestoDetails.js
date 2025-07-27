@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getDatabase, ref, get, set } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import './RestoDetails.css';
+import { getAuth } from 'firebase/auth';
 import { Navigate } from 'react-router-dom';
 
 function RestoDetails({ app, selectedRestaurant }) {
@@ -9,7 +10,6 @@ function RestoDetails({ app, selectedRestaurant }) {
   const [ratingsCount, setRatingsCount] = useState({});
   const [avgRating, setAvgRating] = useState(0);
   const [userReview, setUserReview] = useState({ rating: 5, review: '', image: '' });
-
   const auth = getAuth(app);
   const user = auth.currentUser;
 
@@ -70,7 +70,6 @@ function RestoDetails({ app, selectedRestaurant }) {
 
   };
 
-
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -83,9 +82,6 @@ function RestoDetails({ app, selectedRestaurant }) {
   };
 
   const totalReviews = reviews.length;
-
-  // for no selected restaurant
-  if (selectedRestaurant === null) return <Navigate to="/Reco" />
 
   return (
     <div className="resto-details-container">

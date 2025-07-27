@@ -193,6 +193,22 @@
 	background-color: #0056b3;
 }
 
+.close-button {
+	background-color: #dc3545;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 8px;
+	font-size: 1rem;
+	cursor: pointer;
+	margin: 10px 0;
+	transition: background-color 0.2s ease;
+}
+
+.close-button:hover {
+	background-color: #b52a37;
+}
+
 .participants-list {
 	list-style-type: none;
 	padding-left: 0;
