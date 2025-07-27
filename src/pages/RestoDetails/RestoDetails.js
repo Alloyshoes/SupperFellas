@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getDatabase, ref, get, update } from 'firebase/database';
+import { getDatabase, ref, get, update, remove } from 'firebase/database';
 import './RestoDetails.css';
 import { getAuth } from 'firebase/auth';
 
@@ -31,6 +31,12 @@ function RestoDetails({ app, auth, restaurant }) {
       return;
     }
 
+    // set limit for demo
+    if (Object.keys(reviews).length >= 10) {
+      alert("[DEMO] For testing purposes, number of reviews limited to 10!");
+      return;
+    }
+
     const safeEmail = user.email.replace(/\./g, '_');
     const reviewRef = ref(db, `recommendations/${restaurant.id}/reviews/${safeEmail}`);
 
@@ -55,6 +61,15 @@ function RestoDetails({ app, auth, restaurant }) {
     setUserRating('5');
   };
 
+  // delete recommendation post
+  function deletePost() {
+    if (!window.confirm("Are you sure you want to delete this post? This action cannot be undone."))
+      return;
+
+    remove(ref(db, `recommendations/${restaurant.id}`));
+    navigate("/Reco");
+  }
+
   if (!restaurant) {
     return (
       <div className="detail-page">
@@ -67,9 +82,16 @@ function RestoDetails({ app, auth, restaurant }) {
     reviews.filter(r => r.rating === rating).length
   );
 
+  console.log(reviews)
+  console.log(user)
+
   return (
     <div className="detail-page">
       <button className="back-button" onClick={() => navigate('/Reco')}>← Back to search</button>
+
+      {/* Delete Recommendation Post if author */}
+      {reviews.length > 0 && reviews[reviews.length - 1].user === user.email ? <button className="delete-button" onClick={deletePost}>Delete Post</button> : <div></div>}
+
       <div className="detail-header">
         <h2>{restaurant.name}</h2>
         <div className="detail-meta">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { getDatabase, ref, set } from 'firebase/database';
+import { get, getDatabase, ref, set } from 'firebase/database';
 import './ReccoCreate.css';
 import { getAuth } from 'firebase/auth';
 
@@ -24,6 +24,14 @@ class ReccoCreate extends React.Component {
   handleSubmit = async (e) => {
     e.preventDefault();
 
+    const db = getDatabase(this.props.app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
+    const recoList = await get(ref(db, "recommendations"))
+    // set limit for demo
+    if (Object.keys(recoList).length >= 10) {
+      alert("[DEMO] For testing purposes, number of recommendation posts limited to 10!");
+      return;
+    }
+
     const { name, rating, location, lat, lon, imageFile, review, selectedSuggestion } = this.state;
     const user = getAuth().currentUser;
 
@@ -33,7 +41,6 @@ class ReccoCreate extends React.Component {
     }
 
     const imageUrl = await this.uploadImage(imageFile);
-    const db = getDatabase(this.props.app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
     const safeEmail = user.email.replace(/\./g, '_');
 
     const newReview = {
