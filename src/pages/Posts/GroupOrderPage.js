@@ -1,6 +1,6 @@
-import { get, getDatabase, ref, set } from "firebase/database";
+import { get, getDatabase, ref, set, remove } from "firebase/database";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import grabLogo from "../../assets/providers/grab-logo.png";
 import { getAuth } from "firebase/auth";
 
@@ -14,8 +14,14 @@ const GroupOrderPage = props => {
 	const [chat, setChat] = useState([]);
 	const [msg, setMsg] = useState("");
 	const [updated, setStatus] = useState(false);
+	const [user, setUser] = useState(null);
 
-	const user = getAuth().currentUser;
+	const auth = getAuth();
+	auth.authStateReady().then(() => {
+		setUser(auth.currentUser);
+	})
+
+	const navigate = useNavigate();
 
 	if (!updated) {
 		get(ref(db, "/posts/" + id)).then(r => {
@@ -44,6 +50,13 @@ const GroupOrderPage = props => {
 		set(ref(db, "/posts/" + id + "/joinedUsers"), [...post.joinedUsers, user.email]).then(() => setStatus(false));
 	}
 
+	function handleClose() {
+		remove(ref(db, "/posts/" + id));
+		navigate("/Posts");
+	}
+
+	if (user === null) return <div></div>;
+
 	return <div className="grouporder-container">
 		<div className="order-header">
 			<h1 className="restaurant-name">{post.restaurantName}</h1>
@@ -58,6 +71,7 @@ const GroupOrderPage = props => {
 		<p><strong>Cuisine:</strong> {post.cuisineInfo}</p>
 
 		{!post.joinedUsers?.includes(user.email) && <button className="join-button" onClick={handleJoin}>Join Group Order</button>}
+		{post.user === user.email && <button className="close-button" onClick={handleClose}>Close Group Order</button>}
 
 		<hr />
 
