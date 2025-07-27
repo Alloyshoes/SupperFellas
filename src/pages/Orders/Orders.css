@@ -1,9 +1,11 @@
 .orders-container {
   position: relative;
   width: 100vw;
-  height: calc(100vh - 60px); /* Adjust this if your navbar is taller */
+  height: calc(100vh - 60px);
   margin-top: 0;
   overflow: hidden;
+  display: flex;
+  flex-direction: row;
 }
 
 body {
@@ -38,21 +40,131 @@ body {
   padding: 10px;
   border-radius: 50%;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
 }
 
-.side-panel {
+.locate-button:hover {
+  transform: scale(1.1);
+}
+
+.orders-search-panel {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 300px;
-  height: 100%;
-  background: white;
-  padding: 20px;
-  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+  top: 20px;
+  left: 20px;
+  width: 250px;
+  max-height: 90%;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
   z-index: 1001;
   overflow-y: auto;
 }
 
+.orders-search-bar {
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.order-tile {
+  background: none;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.2s ease-in-out;
+  border-bottom: 1px solid #ddd;
+}
+
+.order-tile:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.order-title {
+  padding: 6px 4px;
+  font-size: 14px;
+}
+
+.order-details-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+.order-details-wrapper.open {
+  max-height: 500px;
+  opacity: 1;
+}
+
+.order-details {
+  font-weight: normal;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
 .side-panel h2 {
   margin-top: 0;
+}
+
+.join-link {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  font-size: 13px;
+}
+
+.join-link:hover {
+  background-color: #388e3c;
+}
+
+@media screen and (max-width: 600px) {
+  .side-panel {
+    width: 100vw;
+    height: 50%;
+    bottom: 0;
+    top: auto;
+    transform: translateY(100%);
+    animation: slideUp 0.3s forwards ease-out;
+  }
+
+  @keyframes slideUp {
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .orders-container {
+    flex-direction: column;
+  }
+
+  .locate-button {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .orders-search-panel {
+    width: 90%;
+    left: 5%;
+    top: 10px;
+  }
 }

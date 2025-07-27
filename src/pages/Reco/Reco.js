@@ -11,7 +11,7 @@ function Reco({ app, onSelectRestaurant }) {
 
   const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
 
-  //Get user location on mount
+  // Get user location on mount
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -24,31 +24,30 @@ function Reco({ app, onSelectRestaurant }) {
     }
   }, []);
 
+  // Fetch posts from /posts instead of /recommendations
   useEffect(() => {
-    const recoRef = ref(db, 'recommendations');
-    get(recoRef).then(snapshot => {
+    const postsRef = ref(db, 'posts');
+    get(postsRef).then(snapshot => {
       if (snapshot.exists()) {
         const data = snapshot.val();
-        const list = Object.keys(data).map(name => {
-          const allReviews = data[name].reviews || {};
-          const reviewArray = Object.values(allReviews);
+        const list = Object.entries(data).map(([id, post]) => {
+          const reviews = post.reviews || {};
+          const reviewArray = Object.values(reviews);
           const rating = reviewArray.length > 0
-            ? reviewArray.reduce((sum, review) => sum + (review.rating || 0), 0) / reviewArray.length
+            ? reviewArray.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewArray.length
             : 0;
 
           const imageReview = reviewArray.find(r => typeof r.image === 'string' && r.image.trim().startsWith('data:image/'));
           const image = imageReview?.image || '';
 
-          const locationReview = reviewArray.find(r => r.location);
-          const location = locationReview?.location || '';
-
-          //Use lat/lon if available
-          const lat = parseFloat(locationReview?.lat) || null;
-          const lon = parseFloat(locationReview?.lon) || null;
+          const location = reviewArray[0]?.location || '';
+          const coords = post.coords || {};
+          const lat = parseFloat(coords.lat || coords[0]) || null;
+          const lon = parseFloat(coords.lon || coords[1]) || null;
 
           return {
-            id: name,
-            name,
+            id,
+            name: post.restaurantName || 'Unnamed',
             rating,
             reviews: reviewArray.length,
             location,
@@ -58,7 +57,7 @@ function Reco({ app, onSelectRestaurant }) {
           };
         });
 
-        //Sort by distance if user coordinates available
+        // Sort by distance if location is available
         if (userCoords) {
           list.sort((a, b) => {
             const distA = a.lat && a.lon ? haversine(userCoords.lat, userCoords.lon, a.lat, a.lon) : Infinity;
@@ -109,9 +108,9 @@ function Reco({ app, onSelectRestaurant }) {
               <h3>{r.name}</h3>
               <div className="meta">
                 <span className="stars">{renderStars(r.rating)}</span>
-                <span className="reviews">({r.reviews} reviews)</span>
+                <span className="reviews">({r.reviews > 0 ? `${r.reviews} reviews` : 'No reviews'})</span>
               </div>
-              <div className="location">{r.location}</div>
+              <div className="location">{r.location || 'No location provided'}</div>
             </div>
           </div>
         ))}
@@ -128,10 +127,10 @@ function renderStars(rating) {
   return stars.join("");
 }
 
-//Haversine formula to calculate distance in KM
+// Haversine formula to calculate distance in KM
 function haversine(lat1, lon1, lat2, lon2) {
   const toRad = deg => deg * (Math.PI / 180);
-  const R = 6371; // Earth radius in KM
+  const R = 6371;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a = Math.sin(dLat / 2) ** 2 +
