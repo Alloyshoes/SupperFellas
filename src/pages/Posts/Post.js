@@ -1,5 +1,6 @@
 import "./Posts.css";
 import grabLogo from "../../assets/providers/grab-logo.png";
+import loadingLogo from "../../assets/loading.svg";
 import { useNavigate } from "react-router-dom";
 
 // Post object: (sent as a prop)
@@ -29,8 +30,12 @@ const Post = ({ post, id }) => {
 		</div>
 		<div className="post-body">
 			<div className="post-title">{post.title}</div>
-			{isGrab && <img src={grabLogo} className="provider-logo"></img>}
+			{
+				post.restaurantName === undefined
+					? <img src={loadingLogo} className="provider-logo"></img>
+					: isGrab && <img src={grabLogo} className="provider-logo"></img>
 
+			}
 			{post.restaurantName && <div className="restaurant-name">{post.restaurantName}</div>}
 			{post.distanceInfo && <div className="distance-info">{post.distanceInfo}</div>}
 			{post.cuisineInfo && <div className="cuisine-info">{post.cuisineInfo.replaceAll(",", ", ")}</div>}

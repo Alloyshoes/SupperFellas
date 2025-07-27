@@ -37,6 +37,12 @@ class PostsHome extends React.Component {
 			return;
 		};
 
+		// limit to grab group order links only (temp)
+		if (!this.state.postLink.startsWith("https://r.grab.com/o/")) {
+			alert("Please only input Grab group order links only! :(");
+			return;
+		}
+
 		const db = getDatabase(this.props.app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
 		const newId = Math.random().toString(36).substring(2, 10); 	// random 8-digit id
 		if (Object.keys(this.state.items).includes(newId)) {
@@ -53,7 +59,7 @@ class PostsHome extends React.Component {
 		}
 		// order scraper action insert
 		scrape(this.state.postLink, newId).then(data => {
-			if (data === null) alert("Link is invalid!");
+			if (data === null) window.alert("Link is invalid!");
 			this.setState({ updated: false });
 
 			// this linkage has been done on the server-side 
@@ -67,6 +73,8 @@ class PostsHome extends React.Component {
 
 		console.log("Writing to database...")
 		set(ref(db, "/posts/" + newId), postObj).then(() => this.setState({ updated: false }));
+
+		alert("Group order posted!");
 	}
 
 	render() {
