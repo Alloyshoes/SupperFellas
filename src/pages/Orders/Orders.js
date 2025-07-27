@@ -1,4 +1,3 @@
-// Orders.js
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -84,7 +83,6 @@ function Orders({ app }) {
       },
       () => alert('Unable to retrieve your location.')
     );
-
     const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
     const postsRef = ref(db, 'posts');
 

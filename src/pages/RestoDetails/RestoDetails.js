@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { getDatabase, ref, get, set } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import './RestoDetails.css';
+import { getAuth } from 'firebase/auth';
 
 function RestoDetails({ app, selectedRestaurant }) {
   const [reviews, setReviews] = useState([]);
   const [ratingsCount, setRatingsCount] = useState({});
   const [avgRating, setAvgRating] = useState(0);
   const [userReview, setUserReview] = useState({ rating: 5, review: '', image: '' });
-
   const auth = getAuth(app);
   const user = auth.currentUser;
 
@@ -85,7 +85,6 @@ function RestoDetails({ app, selectedRestaurant }) {
 
   };
 
-
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -98,6 +97,9 @@ function RestoDetails({ app, selectedRestaurant }) {
   };
 
   const totalReviews = reviews.length;
+
+  console.log(reviews)
+  console.log(user)
 
   return (
     <div className="resto-details-container">

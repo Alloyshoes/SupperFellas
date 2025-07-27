@@ -1,7 +1,8 @@
-import { get, getDatabase, ref, set } from "firebase/database";
+import { get, getDatabase, ref, set, remove } from "firebase/database";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import grabLogo from "../../assets/providers/grab-logo.png";
+import { getAuth } from "firebase/auth";
 
 // The Group Order page is unique to each post, identified by the post ID.
 // Includes: group order details, join order, chat feature
@@ -13,6 +14,14 @@ const GroupOrderPage = props => {
 	const [chat, setChat] = useState([]);
 	const [msg, setMsg] = useState("");
 	const [updated, setStatus] = useState(false);
+	const [user, setUser] = useState(null);
+
+	const auth = getAuth();
+	auth.authStateReady().then(() => {
+		setUser(auth.currentUser);
+	})
+
+	const navigate = useNavigate();
 
 	if (!updated) {
 		get(ref(db, "/posts/" + id)).then(r => {
@@ -27,19 +36,26 @@ const GroupOrderPage = props => {
 	}
 
 	function sendMessage() {
-		// set limit for demo (10 messages)
-		if (chat.length >= 10) {
-			console.log("[DEMO] For testing purposes, chat messages per group order post is limited to 10!");
+		// set limit for demo
+		if (chat.length >= 15) {
+			alert("[DEMO] For testing purposes, chat messages per group order post is limited to 15!");
 			return;
 		}
 
-		set(ref(db, "/chat_data/" + id), [...chat, { from: props.auth.currentUser.email, text: msg }]).then(() => setStatus(false));
+		set(ref(db, "/chat_data/" + id), [...chat, { from: user.email, text: msg }]).then(() => setStatus(false));
 		setMsg("");
 	}
 
 	function handleJoin() {
-		set(ref(db, "/posts/" + id + "/joinedUsers"), [...post.joinedUsers, props.auth.currentUser.email]).then(() => setStatus(false));
+		set(ref(db, "/posts/" + id + "/joinedUsers"), [...post.joinedUsers, user.email]).then(() => setStatus(false));
 	}
+
+	function handleClose() {
+		remove(ref(db, "/posts/" + id));
+		navigate("/Posts");
+	}
+
+	if (user === null) return <div></div>;
 
 	return <div className="grouporder-container">
 		<div className="order-header">
@@ -54,7 +70,8 @@ const GroupOrderPage = props => {
 		<p><strong>Distance:</strong> {post.distanceInfo}</p>
 		<p><strong>Cuisine:</strong> {post.cuisineInfo}</p>
 
-		{!post.joinedUsers?.includes(props.auth.currentUser.email) && <button className="join-button" onClick={handleJoin}>Join Group Order</button>}
+		{!post.joinedUsers?.includes(user.email) && <button className="join-button" onClick={handleJoin}>Join Group Order</button>}
+		{post.user === user.email && <button className="close-button" onClick={handleClose}>Close Group Order</button>}
 
 		<hr />
 

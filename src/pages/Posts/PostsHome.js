@@ -1,8 +1,9 @@
 import React from "react";
 import Post from "./Post.js";
 import "./Posts.css";
-import { getDatabase, ref, set, update } from "firebase/database";
+import { get, getDatabase, ref, set, update } from "firebase/database";
 import { scrape, guessLocation } from "./OrderScraper.js";
+import { getAuth } from "firebase/auth";
 
 class PostsHome extends React.Component {
 	constructor() {
@@ -11,7 +12,11 @@ class PostsHome extends React.Component {
 	}
 
 	componentDidMount() {
-		this.setState({ user: this.props.auth.currentUser, updated: false });
+		const auth = getAuth();
+		auth.authStateReady().then(() => {
+			this.setState({ user: auth.currentUser, updated: false });
+			console.log(auth.currentUser)
+		})
 
 		if (this.state.user === null) {
 			console.error("You are not logged in!");
@@ -19,9 +24,9 @@ class PostsHome extends React.Component {
 	}
 
 	newPost(e) {
-		// set limit for demo (10 posts)
-		if (Object.keys(this.state.items).length == 10) {
-			console.log("[DEMO] For testing purposes, number of posts allowed is limited to 10!");
+		// set limit for demo
+		if (Object.keys(this.state.items).length >= 15) {
+			alert("[DEMO] For testing purposes, number of posts is limited to 15!");
 			return;
 		}
 
@@ -31,6 +36,12 @@ class PostsHome extends React.Component {
 			alert("Please don't leave the fields blank!");
 			return;
 		};
+
+		// limit to grab group order links only (temp)
+		if (!this.state.postLink.startsWith("https://r.grab.com/o/")) {
+			alert("Please only input Grab group order links only! :(");
+			return;
+		}
 
 		const db = getDatabase(this.props.app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
 		const newId = Math.random().toString(36).substring(2, 10); 	// random 8-digit id
@@ -48,10 +59,10 @@ class PostsHome extends React.Component {
 		}
 		// order scraper action insert
 		scrape(this.state.postLink, newId).then(data => {
-			if (data === null) alert("Link is invalid!");
+			if (data === null) window.alert("Link is invalid!");
 			this.setState({ updated: false });
 
-			// this linkage is done server-side too
+			// this linkage has been done on the server-side 
 			// // guessLoc
 			// var restaurant = data.restaurantName;
 			// guessLocation(restaurant, newId).then(data => {
@@ -62,11 +73,13 @@ class PostsHome extends React.Component {
 
 		console.log("Writing to database...")
 		set(ref(db, "/posts/" + newId), postObj).then(() => this.setState({ updated: false }));
+
+		alert("Group order posted!");
 	}
 
 	render() {
 		if (this.state.user === null) {
-			return <div style={{ fontSize: 100, textAlign: "center", color: "red" }}>You are not logged in!</div>
+			return <div style={{ fontSize: 100, textAlign: "center" }}>Loading...</div>
 		}
 
 		// hack-y way to get data from database lol
@@ -80,7 +93,6 @@ class PostsHome extends React.Component {
 			<div className="posts-home-container">
 				<div id="welcome-text">Welcome back {this.state.user.email}!</div>
 
-				{/* TODO: to be exported into PostsCreator component */}
 				<div className="add-post-form">
 					<h2>Start a new group order!</h2>
 					<form onSubmit={e => this.newPost(e)}>
@@ -96,6 +108,7 @@ class PostsHome extends React.Component {
 				<hr /> <br />
 
 				{/* Post Feed */}
+				<div><b>Open Orders:</b></div> <br />
 				{Object.values(this.state.items).map((post, idx) => <Post key={idx} post={post} id={Object.keys(this.state.items)[idx]}></Post>)}
 			</div>
 		</div>;
