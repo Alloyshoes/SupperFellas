@@ -11,6 +11,7 @@ import Home from './pages/Home/Home';
 
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import GuidePage from './pages/Guide/Guide';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -35,8 +36,9 @@ function App() {
         <Route path="Orders" element={<Orders app={app} auth={auth} />} />
         <Route path="Reco" element={<Reco app={app} auth={auth} onSelectRestaurant={setSelectedRestaurant} />} />
         <Route path="ReccoCreate" element={<ReccoCreate app={app} auth={auth} />} />
-        <Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} selectedRestaurant={selectedRestaurant} />} />
-        <Route path="order/:id" element={<GroupOrderPage auth={auth} />} />
+        <Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selectedRestaurant} />} />
+        <Route path="/order/:id" element={<GroupOrderPage auth={auth} />} />
+        <Route path="/guide" element={<GuidePage />} />
       </Route>
 
       {/* Fallback route */}

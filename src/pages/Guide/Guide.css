@@ -1,0 +1,59 @@
+.guide-page {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: larger;
+  background-color: #fefefe;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  line-height: 1.6;
+  color: #333;
+}
+
+.guide-page h1 {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
+}
+
+.guide-page h2 {
+  font-size: 1.8rem;
+  margin-top: 40px;
+  margin-bottom: 12px;
+}
+
+.guide-page h3 {
+  font-size: 1.4rem;
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
+.guide-page p {
+  margin-bottom: 16px;
+}
+
+.guide-page ul {
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.guide-page li {
+  margin-bottom: 4px;
+}
+
+.guide-page code {
+  background-color: #f1f1f1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #c7254e;
+}
+
+.guide-page hr {
+  margin: 40px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}

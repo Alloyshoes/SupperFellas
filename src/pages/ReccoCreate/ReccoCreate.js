@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ReccoCreate.css';
 import { getAuth } from 'firebase/auth';
+import { getApp } from 'firebase/app';
 
 function ReccoCreate({ app }) {
   const auth = getAuth(app);

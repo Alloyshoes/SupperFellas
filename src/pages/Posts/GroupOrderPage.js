@@ -48,6 +48,7 @@ const GroupOrderPage = props => {
 
 	function handleJoin() {
 		set(ref(db, "/posts/" + id + "/joinedUsers"), [...post.joinedUsers, user.email]).then(() => setStatus(false));
+		window.open(post.link);	// opens link in new tab
 	}
 
 	function handleClose() {
@@ -85,22 +86,25 @@ const GroupOrderPage = props => {
 
 		<hr />
 
-		<h3>Group Chat</h3>
-		<div className="chat-box">
-			{chat?.map((m, i) => (
-				<div key={i} className="chat-message">
-					<strong>{m.from}:</strong> {m.text}
+		{
+			<div>
+				<h3>Group Chat</h3>
+				<div className="chat-box">
+					{chat?.map((m, i) => (
+						<div key={i} className="chat-message">
+							<strong>{m.from}:</strong> {m.text}
+						</div>
+					))}
 				</div>
-			))}
-		</div>
-		<div className="chat-input">
-			<input
-				value={msg}
-				onChange={(e) => setMsg(e.target.value)}
-				placeholder="Type message..."
-			/>
-			<button onClick={sendMessage}>Send</button>
-		</div>
+				<div className="chat-input">
+					<input
+						value={msg}
+						onChange={(e) => setMsg(e.target.value)}
+						placeholder="Type message..."
+					/>
+					<button onClick={sendMessage}>Send</button>
+				</div></div>
+		}
 	</div>
 }
 
