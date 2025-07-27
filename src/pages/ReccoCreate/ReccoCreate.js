@@ -11,7 +11,6 @@ function ReccoCreate({ app }) {
   const [imageData, setImageData] = useState('');
   const [address, setAddress] = useState('');
 
-  // 1. Fetch posts from database endpoint
   useEffect(() => {
     fetch(`${process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT}/posts.json`)
       .then(res => res.json())
@@ -21,7 +20,6 @@ function ReccoCreate({ app }) {
       .catch(err => console.error('Error loading posts:', err));
   }, []);
 
-  // 2. Reverse-geocode when post selected
   useEffect(() => {
     const rec = posts[selectedPostId];
     if (rec && rec.coords && rec.coords.length === 2) {
@@ -49,6 +47,14 @@ function ReccoCreate({ app }) {
       alert('Fill all required fields');
       return;
     }
+
+    const selectedPost = posts[selectedPostId];
+    const restaurantName = selectedPost?.restaurantName;
+    if (!restaurantName) {
+      alert('Selected post does not have a restaurant name.');
+      return;
+    }
+
     const emailKey = user.email.replace(/[.#$[\]]/g, '_');
     const reviewPayload = {
       user: user.email,
@@ -59,29 +65,28 @@ function ReccoCreate({ app }) {
       timestamp: Date.now()
     };
 
-    // Get user ID token to authenticate REST call
     const idToken = await user.getIdToken();
+    const path = `Reccomendations/${encodeURIComponent(restaurantName)}/${emailKey}`;
+    const url = `${process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT}/${path}.json?auth=${idToken}`;
 
-    const url = `${process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT}/posts/${encodeURIComponent(selectedPostId)}/reviews/${emailKey}.json?auth=${idToken}`;
     fetch(url, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(reviewPayload)
     })
-    .then(res => {
-      if (!res.ok) throw new Error(`code ${res.status}`);
-      alert('Review saved!');
-      // reset
-      setSelectedPostId('');
-      setRating('');
-      setReview('');
-      setImageData('');
-      setAddress('');
-    })
-    .catch(err => {
-      console.error('Error writing review:', err);
-      alert('Failed to submit review.');
-    });
+      .then(res => {
+        if (!res.ok) throw new Error(`code ${res.status}`);
+        alert('Review saved!');
+        setSelectedPostId('');
+        setRating('');
+        setReview('');
+        setImageData('');
+        setAddress('');
+      })
+      .catch(err => {
+        console.error('Error writing review:', err);
+        alert('Failed to submit review.');
+      });
   };
 
   return (
@@ -101,7 +106,9 @@ function ReccoCreate({ app }) {
         <label>Rating</label>
         <select value={rating} onChange={e => setRating(e.target.value)} required>
           <option value="">1–5</option>
-          {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
+          {[1, 2, 3, 4, 5].map(n => (
+            <option key={n} value={n}>{n}</option>
+          ))}
         </select>
 
         <label>Review</label>
@@ -111,10 +118,12 @@ function ReccoCreate({ app }) {
         <input type="file" accept="image/*" onChange={handleImageChange} />
         {imageData && <img src={imageData} alt="preview" className="image-preview" />}
 
-        {address && <>
-          <label>Address</label>
-          <input type="text" value={address} readOnly />
-        </>}
+        {address && (
+          <>
+            <label>Address</label>
+            <input type="text" value={address} readOnly />
+          </>
+        )}
 
         <button type="submit">Submit Review</button>
       </form>
