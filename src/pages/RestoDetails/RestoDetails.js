@@ -9,6 +9,7 @@ function RestoDetails({ app, auth, restaurant }) {
   const [userReview, setUserReview] = useState('');
   const [userRating, setUserRating] = useState('5');
 
+  const user = localStorage.getItem("user");
   const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
 
   useEffect(() => {
@@ -24,19 +25,19 @@ function RestoDetails({ app, auth, restaurant }) {
   }, [db, restaurant]);
 
   const handleSubmitReview = async () => {
-    if (!auth.currentUser) {
+    if (!user) {
       alert("Please login to submit a review.");
       return;
     }
 
-    const safeEmail = auth.currentUser.email.replace(/\./g, '_');
+    const safeEmail = user.email.replace(/\./g, '_');
     const reviewRef = ref(db, `recommendations/${restaurant.id}/reviews/${safeEmail}`);
 
     const newReview = {
       rating: parseInt(userRating),
       review: userReview,
       timestamp: Date.now(),
-      user: auth.currentUser.email
+      user: user.email
     };
 
 

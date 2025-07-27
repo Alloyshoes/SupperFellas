@@ -24,7 +24,7 @@ class ReccoCreate extends React.Component {
     e.preventDefault();
 
     const { name, rating, location, lat, lon, imageFile, review, selectedSuggestion } = this.state;
-    const user = this.props.auth?.currentUser;
+    const user = localStorage.getItem("user");
 
     if (!user || !name || !rating || !location || !imageFile || !review || !selectedSuggestion) {
       alert('All fields are required and a valid location must be selected.');

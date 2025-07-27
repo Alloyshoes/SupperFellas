@@ -11,7 +11,7 @@ class PostsHome extends React.Component {
 	}
 
 	componentDidMount() {
-		this.setState({ user: this.props.auth.currentUser, updated: false });
+		this.setState({ user: localStorage.getItem("user"), updated: false });
 
 		if (this.state.user === null) {
 			console.error("You are not logged in!");
@@ -51,7 +51,7 @@ class PostsHome extends React.Component {
 			if (data === null) alert("Link is invalid!");
 			this.setState({ updated: false });
 
-			// this linkage is done server-side too
+			// this linkage has been done on the server-side 
 			// // guessLoc
 			// var restaurant = data.restaurantName;
 			// guessLocation(restaurant, newId).then(data => {
@@ -80,7 +80,6 @@ class PostsHome extends React.Component {
 			<div className="posts-home-container">
 				<div id="welcome-text">Welcome back {this.state.user.email}!</div>
 
-				{/* TODO: to be exported into PostsCreator component */}
 				<div className="add-post-form">
 					<h2>Start a new group order!</h2>
 					<form onSubmit={e => this.newPost(e)}>
@@ -96,6 +95,7 @@ class PostsHome extends React.Component {
 				<hr /> <br />
 
 				{/* Post Feed */}
+				<div><b>Open Orders:</b></div> <br />
 				{Object.values(this.state.items).map((post, idx) => <Post key={idx} post={post} id={Object.keys(this.state.items)[idx]}></Post>)}
 			</div>
 		</div>;
