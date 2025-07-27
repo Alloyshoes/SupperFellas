@@ -2,6 +2,7 @@ import React from 'react';
 import { getDatabase, ref, set } from 'firebase/database';
 import './ReccoCreate.css';
 import { getAuth } from 'firebase/auth';
+import { getApp } from 'firebase/app';
 
 class ReccoCreate extends React.Component {
   constructor(props) {
@@ -20,21 +21,11 @@ class ReccoCreate extends React.Component {
     };
     this.debounceTimeout = null;
   }
-
-  handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const { name, rating, location, lat, lon, imageFile, review, selectedSuggestion } = this.state;
+  // for use outside of ReccoCreate
+  static async newReco(name, rating, location, lat, lon, imageUrl, review) {
     const user = getAuth().currentUser;
-
-    if (!user || !name || !rating || !location || !imageFile || !review || !selectedSuggestion) {
-      alert('All fields are required and a valid location must be selected.');
-      return;
-    }
-
-    const imageUrl = await this.uploadImage(imageFile);
-    const db = getDatabase(this.props.app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
     const safeEmail = user.email.replace(/\./g, '_');
+    const db = getDatabase(getApp(), process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
 
     const newReview = {
       user: user.email,
@@ -49,8 +40,24 @@ class ReccoCreate extends React.Component {
     };
 
     await set(ref(db, `recommendations/${name}/reviews/${safeEmail}`), newReview);
+  }
+
+  handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const { name, rating, location, lat, lon, imageFile, review, selectedSuggestion } = this.state;
+    const user = getAuth().currentUser;
+
+    if (!user || !name || !rating || !location || !imageFile || !review || !selectedSuggestion) {
+      alert('All fields are required and a valid location must be selected.');
+      return;
+    }
+
+    const imageUrl = await this.uploadImage(imageFile);
+    await ReccoCreate.newReco(name, rating, location, lat, lon, imageUrl, review);
     this.setState({ submitted: true });
   };
+
 
   uploadImage = async (file) => {
     return new Promise((resolve) => {

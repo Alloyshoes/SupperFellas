@@ -16,6 +16,10 @@ const GroupOrderPage = props => {
 	const [updated, setStatus] = useState(false);
 	const [user, setUser] = useState(null);
 
+	const [isReviewing, setReviewingStatus] = useState(false);
+	const [review, setReview] = useState("");
+	const [stars, setStars] = useState(5);
+
 	const auth = getAuth();
 	auth.authStateReady().then(() => {
 		setUser(auth.currentUser);
@@ -48,11 +52,25 @@ const GroupOrderPage = props => {
 
 	function handleJoin() {
 		set(ref(db, "/posts/" + id + "/joinedUsers"), [...post.joinedUsers, user.email]).then(() => setStatus(false));
+		window.open(post.link);	// opens link in new tab
 	}
 
 	function handleClose() {
-		remove(ref(db, "/posts/" + id));
-		navigate("/Posts");
+		if (!window.confirm("Are you sure you want to close this group order? This action cannot be undone.")) return;
+
+		// add recommendation/review after close order
+		if (!window.confirm("Do you want to leave a review for your order?")) {
+			remove(ref(db, "/posts/" + id));
+			navigate("/Posts");
+			return;
+		}
+
+		setReviewingStatus(true);
+	}
+
+	function reviewSubmit() {
+		// TODO: submit review (via static function)
+		// then properly close
 	}
 
 	if (user === null) return <div></div>;
@@ -84,22 +102,41 @@ const GroupOrderPage = props => {
 
 		<hr />
 
-		<h3>Group Chat</h3>
-		<div className="chat-box">
-			{chat?.map((m, i) => (
-				<div key={i} className="chat-message">
-					<strong>{m.from}:</strong> {m.text}
+		{
+			isReviewing ?
+				<div>
+					{/* Review Container*/}
+					<h3>Leave a Review</h3>
+					<div className="chat-input">
+						<textarea rows="4" value={review} onChange={(e) => setReview(e.target.value)}></textarea>
+						<button onSubmit={reviewSubmit}>
+							Submit
+						</button>
+					</div>
+					<select value={stars} onChange={(e) => setStars(e.target.value)}>
+						{[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
+					</select>
 				</div>
-			))}
-		</div>
-		<div className="chat-input">
-			<input
-				value={msg}
-				onChange={(e) => setMsg(e.target.value)}
-				placeholder="Type message..."
-			/>
-			<button onClick={sendMessage}>Send</button>
-		</div>
+				:
+				<div>
+					{/* Group Chat Container */}
+					<h3>Group Chat</h3>
+					<div className="chat-box">
+						{chat?.map((m, i) => (
+							<div key={i} className="chat-message">
+								<strong>{m.from}:</strong> {m.text}
+							</div>
+						))}
+					</div>
+					<div className="chat-input">
+						<input
+							value={msg}
+							onChange={(e) => setMsg(e.target.value)}
+							placeholder="Type message..."
+						/>
+						<button onClick={sendMessage}>Send</button>
+					</div></div>
+		}
 	</div>
 }
 
