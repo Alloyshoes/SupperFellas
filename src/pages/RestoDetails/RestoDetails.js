@@ -83,6 +83,9 @@ function RestoDetails({ app, selectedRestaurant }) {
 
   const totalReviews = reviews.length;
 
+  // for no selected restaurant
+  if (selectedRestaurant === null) return <Navigate to="/Reco" />
+
   return (
     <div className="resto-details-container">
       <h2 className="resto-title">{selectedRestaurant?.name}</h2>
