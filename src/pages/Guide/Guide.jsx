@@ -37,7 +37,7 @@ const GuidePage = () => {
       </p>
 
       <h3>Order Links</h3>
-      <p>
+      <div>
         For prototyping purposes, the order scraping system will only work with{" "}
         <b>Grab Group Order</b> links. These links are generated through the{" "}
         <b>Grab</b> mobile app, and typically starts with{" "}
@@ -110,7 +110,7 @@ const GuidePage = () => {
             </tr>
           </tbody>
         </table>
-      </p>
+      </div>
 
       <h3>Posting Process</h3>
       <p>
@@ -120,10 +120,10 @@ const GuidePage = () => {
         inevitably take some time, so it will eventually appear if the scraping
         is successful. This is all done server-side, so you don't have to wait
         at the page for it to be done.
-        <p>
-          There will be a📍pin for the restaurant on the map in the{" "}
-          <a href="/Orders">Orders page</a> as well!
-        </p>
+      </p>
+      <p>
+        There will be a📍pin for the restaurant on the map in the{" "}
+        <a href="/Orders">Orders page</a> as well!
       </p>
 
       <h3>Recommendations/Reviews</h3>
@@ -140,12 +140,12 @@ const GuidePage = () => {
         set to make sure the total data size is under the limit of the database.
         No worries since you can delete posts.
       </p>
-      <ui>
+      <ul>
         <li>Group Order Posts: 15</li>
         <li>Chat History: 15</li>
         <li>Recommendations: 15</li>
         <li>Reviews: 10</li>
-      </ui>
+      </ul>
 
       <h2>Reflections</h2>
       <p>

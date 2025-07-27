@@ -23,7 +23,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 function App() {
-  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
   return (
     <Routes>
@@ -34,9 +33,9 @@ function App() {
       <Route element={<Home />}>
         <Route path="Posts" element={<PostsHome app={app} auth={auth} />} />
         <Route path="Orders" element={<Orders app={app} auth={auth} />} />
-        <Route path="Reco" element={<Reco app={app} auth={auth} onSelectRestaurant={setSelectedRestaurant} />} />
+        <Route path="Reco" element={<Reco app={app} auth={auth} />} />
         <Route path="ReccoCreate" element={<ReccoCreate app={app} auth={auth} />} />
-        <Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} restaurant={selectedRestaurant} />} />
+        <Route path="RestoDetails" element={<RestoDetails app={app} auth={auth} />} />
         <Route path="/order/:id" element={<GroupOrderPage auth={auth} />} />
         <Route path="/guide" element={<GuidePage />} />
       </Route>

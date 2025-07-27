@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react';
 import { getDatabase, ref, get, set } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import './RestoDetails.css';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLoaderData, useLocation } from 'react-router-dom';
 
-function RestoDetails({ app, selectedRestaurant }) {
+function RestoDetails({ app }) {
   const [reviews, setReviews] = useState([]);
   const [ratingsCount, setRatingsCount] = useState({});
   const [avgRating, setAvgRating] = useState(0);
   const [userReview, setUserReview] = useState({ rating: 5, review: '', image: '' });
   const auth = getAuth(app);
   const user = auth.currentUser;
+
+  const location = useLocation();
+  const selectedRestaurant = location?.state.restaurant || null;
 
   const update = () => {
     if (!selectedRestaurant?.name) return;

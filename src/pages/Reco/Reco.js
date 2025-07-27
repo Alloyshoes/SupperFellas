@@ -83,8 +83,7 @@ function Reco({ app, onSelectRestaurant }) {
   );
 
   const handleSelect = (restaurant) => {
-    onSelectRestaurant(restaurant);
-    navigate('/RestoDetails');
+    navigate('/RestoDetails', {state: {restaurant}});
   };
 
   return (
