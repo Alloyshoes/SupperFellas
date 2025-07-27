@@ -143,8 +143,8 @@ const GuidePage = () => {
       <ui>
         <li>Group Order Posts: 15</li>
         <li>Chat History: 15</li>
-        <li>Recommendations: 10</li>
-        <li>Reviews (within Recommendations): 10</li>
+        <li>Recommendations: 15</li>
+        <li>Reviews: 10</li>
       </ui>
 
       <h2>Reflections</h2>
@@ -160,10 +160,6 @@ const GuidePage = () => {
       </p>
 
       <hr />
-      <p>
-        If there are any urgent queries, you can contact us at
-        @u.nus.edu/@u.nus.edu
-      </p>
       <br />
       <p style={{ fontSize: "small" }}>SupperFellas by Isaac and Aloysius</p>
     </div>

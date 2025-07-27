@@ -61,6 +61,12 @@ function RestoDetails({ app, selectedRestaurant }) {
     const userKey = user.email.replace(/\./g, '_');
     const userRef = ref(db, `Reccomendations/${selectedRestaurant.name}/${userKey}`);
 
+    // set limit for demo
+    if (reviews.length >= 10) {
+      alert("[DEMO] For testing purposes, number of reviews is limited to 10!");
+      return;
+    }
+
     set(userRef, userReview).then(() => {
       alert("Review updated!");
 
