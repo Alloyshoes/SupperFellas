@@ -8,7 +8,7 @@ SupperFellas is a web application that helps users save on late-night delivery f
 
 ## Link to our Application
 
-<a href="http://128.199.156.174:3000/" target="_blank">Click Here </a>
+<a href="https://128.199.156.174:3000/" target="_blank">Click Here </a>
 
 There is a User Guide available in the app! Located at /guide
 
@@ -67,11 +67,11 @@ Coming Soon
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React.js
-- **Backend**: Spring Boot Java
+- **Frontend**: ReactJS
+- **Backend**: ExpressJS
 - **Database**: Firebase Realtime Database
 - **Authentication**: Firebase Authentication
-- **Hosting**: Firebase Hosting
+- **Hosting**: DigitalOcean
 
 ---
 
