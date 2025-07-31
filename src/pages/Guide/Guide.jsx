@@ -128,10 +128,10 @@ const GuidePage = () => {
 
       <h3>Recommendations/Reviews</h3>
       <p>
-        Users are able to recommend and review the restaurant of their group
-        order after it is closed. This can be seen in the{" "}
-        <a href="/Reco">Recommendations page</a>, where additional reviewing can
-        be done.
+        Users are able to recommend and review the restaurant of currently open
+        group orders. This can be seen in the{" "}
+        <a href="/Reco">Recommendations page</a>, where reviews from other users
+        are also welcomed.
       </p>
 
       <h2>Demo Limits</h2>
