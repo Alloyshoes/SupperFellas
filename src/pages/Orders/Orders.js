@@ -72,23 +72,30 @@ function Orders({ app }) {
 
     const food = L.icon({ iconUrl: foodIcon, iconSize: [40, 40], iconAnchor: [20, 40] });
 
-    var coords = {
-      latitude: 1.2976,
-      longitude: 103.7767
-      // coords of NUS (default)
-    };
     navigator.geolocation.getCurrentPosition(
-      ({ _coords }) => {
-        coords = _coords; // user location
+      ({ coords }) => {
+        const { latitude, longitude } = coords;
+        setUserLocation({ latitude, longitude });
+        map.setView([latitude, longitude], 15);
+        const marker = L.marker([latitude, longitude], { icon: rice }).addTo(map);
+        marker.bindPopup('You are here!').openPopup();
+        setUserMarker(marker);
       },
-      () => alert('Unable to retrieve your location.')
+      () => {
+        alert('Unable to retrieve your location.');
+        var coords = {
+          latitude: 1.2976,
+          longitude: 103.7767
+          // coords of NUS (default)
+        };
+        const { latitude, longitude } = coords;
+        setUserLocation({ latitude, longitude });
+        map.setView([latitude, longitude], 15);
+        const marker = L.marker([latitude, longitude], { icon: rice }).addTo(map);
+        marker.bindPopup('You are here!').openPopup();
+        setUserMarker(marker);
+      }
     );
-    const { latitude, longitude } = coords;
-    setUserLocation({ latitude, longitude });
-    map.setView([latitude, longitude], 15);
-    const marker = L.marker([latitude, longitude], { icon: rice }).addTo(map);
-    marker.bindPopup('You are here!').openPopup();
-    setUserMarker(marker);
     const db = getDatabase(app, process.env.REACT_APP_FIREBASE_DATABASE_ENDPOINT);
     const postsRef = ref(db, 'posts');
 
