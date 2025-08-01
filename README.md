@@ -8,7 +8,7 @@ SupperFellas is a web application that helps users save on late-night delivery f
 
 ## Link to our Application
 
-<a href="https://128.199.156.174:3000/" target="_blank">Click Here </a>
+<a href="http://128.199.156.174:3000/" target="_blank">Click Here </a>
 
 There is a User Guide available in the app! Located at /guide
 
